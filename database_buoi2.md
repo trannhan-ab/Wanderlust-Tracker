@@ -1,8 +1,5 @@
 
-
 ## 1. Xây dựng CSDL Mức Logic 
-
-
 *   **Bảng 1: NGƯỜI DÙNG (User)**
     *   Cấu trúc: `User` ( **user_id**, username, password )
     *   *Khóa chính (PK):* `user_id`
@@ -17,8 +14,6 @@
     *   *Khóa chính (PK):* `id`
     *   *Khóa ngoại (FK):* `source_id` tham chiếu đến bảng `BudgetSource(source_id)` để kết nối địa điểm với ví chi trả.
 
----
-
 ## 2.SQL Server Script
 ```sql
 CREATE DATABASE WanderlustTracker;
@@ -26,7 +21,7 @@ GO
 USE WanderlustTracker;
 GO
 
--- Tạo bảng Người dùng (Phục vụ Đăng ký/Đăng nhập)
+-- Bảng Người dùng
 CREATE TABLE [User] (
     user_id INT IDENTITY(1,1),
     username VARCHAR(50) NOT NULL,
@@ -35,7 +30,7 @@ CREATE TABLE [User] (
     CONSTRAINT UC_Username UNIQUE (username)
 );
 
--- Tạo bảng Nguồn ngân sách
+-- Bảng Nguồn ngân sách
 CREATE TABLE BudgetSource (
     source_id INT IDENTITY(1,1),
     source_name NVARCHAR(100) NOT NULL,
@@ -45,7 +40,7 @@ CREATE TABLE BudgetSource (
     CONSTRAINT FK_BudgetSource_User FOREIGN KEY (user_id) REFERENCES [User](user_id)
 );
 
--- Tạo bảng Địa điểm trải nghiệm
+-- Bảng Địa điểm trải nghiệm
 CREATE TABLE Destination (
     id INT IDENTITY(1,1),
     name NVARCHAR(255) NOT NULL,
