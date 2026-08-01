@@ -1,0 +1,10 @@
+[
+  {
+    "user_id": 1,
+    "fullname": "Demo Student",
+    "username": "demo",
+    "email": "demo@wanderlust.vn",
+    "phone": "0987654321",
+    "password": "123456789"
+  }
+]

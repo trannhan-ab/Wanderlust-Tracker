@@ -1,0 +1,20 @@
+[
+  {
+    "source_id": 1,
+    "source_name": "Part-time Job Savings",
+    "init_amount": 12000000,
+    "user_id": 1
+  },
+  {
+    "source_id": 2,
+    "source_name": "Family Support",
+    "init_amount": 8000000,
+    "user_id": 1
+  },
+  {
+    "source_id": 3,
+    "source_name": "Scholarship Fund",
+    "init_amount": 5000000,
+    "user_id": 1
+  }
+]

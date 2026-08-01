@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Da Lat Highlands",
+    "category": "Mountain",
+    "budget": 3500000,
+    "priority": 5,
+    "status": 1,
+    "source_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Phu Quoc Island",
+    "category": "Beach",
+    "budget": 8200000,
+    "priority": 4,
+    "status": 0,
+    "source_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Hoi An Ancient Town",
+    "category": "Culture",
+    "budget": 4800000,
+    "priority": 3,
+    "status": 1,
+    "source_id": 2
+  },
+  {
+    "id": 4,
+    "name": "Sapa Trekking",
+    "category": "Adventure",
+    "budget": 3000000,
+    "priority": 5,
+    "status": 0,
+    "source_id": 2
+  },
+  {
+    "id": 5,
+    "name": "Ha Giang Loop",
+    "category": "Adventure",
+    "budget": 2200000,
+    "priority": 4,
+    "status": 0,
+    "source_id": 3
+  }
+]
