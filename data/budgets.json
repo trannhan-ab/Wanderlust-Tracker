@@ -16,5 +16,11 @@
     "source_name": "Scholarship Fund",
     "init_amount": 5000000,
     "user_id": 1
+  },
+  {
+    "source_id": 4,
+    "source_name": "My Savings",
+    "init_amount": 5000000,
+    "user_id": 2
   }
 ]
