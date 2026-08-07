@@ -1,7 +1,3 @@
-/* ============================================================
-   WANDERLUST TRACKER
-   Vanilla browser client | Express API | JSON-file persistence
-   ============================================================ */
 
 "use strict";
 

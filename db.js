@@ -19,7 +19,6 @@ function getFilePath(type) {
   const dataPath = path.join(dataDirectory, fileName);
   const rootPath = path.join(__dirname, fileName);
 
-  // Prefer the data/ folder shown in the VS Code project structure.
   if (fs.existsSync(dataPath)) return dataPath;
   if (fs.existsSync(rootPath)) return rootPath;
 
