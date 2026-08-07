@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wanderlust Tracker 🌸</title>
+  <meta name="description" content="Your soft pastel travel planning and budget hub">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- AUTH SECTION -->
+  <section id="auth-section">
+    <div class="auth-bg">
+      <div class="auth-bubble auth-bubble--1"></div>
+      <div class="auth-bubble auth-bubble--2"></div>
+      <div class="auth-bubble auth-bubble--3"></div>
+      <div class="auth-bubble auth-bubble--4"></div>
+    </div>
+
+    <div class="auth-wrapper">
+      <div class="auth-brand">
+        <div class="auth-brand-icon"></div>
+        <h1>Wanderlust Tracker</h1>
+        <p>Your cute travel planning & budget hub ✈️</p>
+      </div>
+
+      <!-- Login Screen -->
+      <div id="login-screen" class="auth-card">
+        <div class="auth-card-emoji"></div>
+        <h2>Welcome back!</h2>
+        <p class="auth-subtitle">Sign in to continue your journey~</p>
+        <div id="login-error" class="auth-error" style="display:none;"></div>
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label for="login-username">Username or Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+              <button type="button" class="pw-toggle" onclick="togglePw('login-password',this)" tabindex="-1">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary btn-full">Sign In</button>
+        </form>
+        <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister(event)">Register now ✨</a></p>
+        <p class="auth-demo">Demo: <strong>demo</strong> / <strong>123456789</strong></p>
+      </div>
+
+      <!-- Register Screen -->
+      <div id="register-screen" class="auth-card" style="display:none;">
+        <div class="auth-card-emoji"></div>
+        <h2>Create Account</h2>
+        <p class="auth-subtitle">Join Wanderlust and start your adventure~</p>
+        <div id="register-error" class="auth-error" style="display:none;"></div>
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label for="reg-fullname">Full Name</label>
+            <div class="input-wrapper">
+              <i class="fas fa-id-card input-icon"></i>
+              <input type="text" id="reg-fullname" placeholder="Your full name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-email">Email</label>
+              <div class="input-wrapper">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="reg-email" placeholder="email@example.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reg-phone">Phone</label>
+              <div class="input-wrapper">
+                <i class="fas fa-phone input-icon"></i>
+                <input type="tel" id="reg-phone" placeholder="0123456789">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-password">Password</label>
+              <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="reg-password" placeholder="Min. 6 characters">
+                <button type="button" class="pw-toggle" onclick="togglePw('reg-password',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reg-confirm">Confirm</label>
+              <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="reg-confirm" placeholder="Repeat password">
+                <button type="button" class="pw-toggle" onclick="togglePw('reg-confirm',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary btn-full">Create Account</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin(event)">Sign in</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP SECTION -->
+  <div id="app-section" style="display:none;">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon"></div>
+          <div class="logo-text">
+            <h2>Wanderlust</h2>
+            <span>Travel Tracker</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-view="dashboard" onclick="navigateTo('dashboard',this)">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-view="destinations" onclick="navigateTo('destinations',this)">
+          <span class="nav-icon">📍</span>
+          <span class="nav-label">Destinations</span>
+        </a>
+        <a href="#" class="nav-item" data-view="budgets" onclick="navigateTo('budgets',this)">
+          <span class="nav-icon">💰</span>
+          <span class="nav-label">Budgets</span>
+        </a>
+        <a href="#" class="nav-item" data-view="settings" onclick="navigateTo('settings',this)">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="sidebar-avatar">ST</div>
+          <div class="sidebar-user-info">
+            <p class="sidebar-user-name" id="sidebar-username">Student</p>
+            <p class="sidebar-user-role">✈️ Travel Planner</p>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </aside>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+
+      <!-- Topbar (mobile) -->
+      <header class="topbar">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <span class="topbar-title" id="topbar-page-title">Dashboard</span>
+        <div class="topbar-right">
+          <div class="topbar-user">
+            <div class="topbar-avatar" id="topbar-avatar">ST</div>
+            <span id="topbar-username">demo</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- DASHBOARD -->
+      <div id="view-dashboard" class="view">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Dashboard 🌸</h1>
+            <p class="page-subtitle">Here's your travel overview, let's go! ✈️</p>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card metric-card--pink">
+            <div class="metric-icon-wrap">📍</div>
+            <div class="metric-body">
+              <p class="metric-label">Total Destinations</p>
+              <h3 class="metric-value" id="metric-total">0</h3>
+              <p class="metric-sub" id="metric-total-sub">Across all categories</p>
+            </div>
+          </div>
+          <div class="metric-card metric-card--mint">
+            <div class="metric-icon-wrap">✅</div>
+            <div class="metric-body">
+              <p class="metric-label">Visited</p>
+              <h3 class="metric-value" id="metric-visited">0</h3>
+              <p class="metric-sub" id="metric-visited-sub">0% completion</p>
+            </div>
+          </div>
+          <div class="metric-card metric-card--lavender">
+            <div class="metric-icon-wrap">💰</div>
+            <div class="metric-body">
+              <p class="metric-label">Total Budget</p>
+              <h3 class="metric-value metric-value--sm" id="metric-budget">0 ₫</h3>
+              <p class="metric-sub" id="metric-budget-sub">From 0 sources</p>
+            </div>
+          </div>
+          <div class="metric-card metric-card--peach">
+            <div class="metric-icon-wrap">🌿</div>
+            <div class="metric-body">
+              <p class="metric-label">Remaining Budget</p>
+              <h3 class="metric-value metric-value--sm" id="metric-remaining">0 ₫</h3>
+              <p class="metric-sub">Available to allocate</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="cute-card chart-card">
+            <div class="cute-card-header">
+              <h3 class="cute-card-title">💸 Budget Sources</h3>
+              <span class="pill pill--pink">Allocation</span>
+            </div>
+            <div class="donut-chart-area">
+              <canvas id="budget-chart"></canvas>
+              <div id="budget-chart-empty" class="chart-empty" style="display:none;">
+                <span style="font-size:32px">💸</span><p>No budget sources</p>
+              </div>
+            </div>
+            <div id="budget-chart-legend" class="chart-legend"></div>
+          </div>
+
+          <div class="cute-card chart-card chart-card--wide">
+            <div class="cute-card-header">
+              <h3 class="cute-card-title">🗺️ Destinations by Category</h3>
+              <span class="pill pill--lavender">Count</span>
+            </div>
+            <div class="bar-chart-area">
+              <canvas id="category-chart"></canvas>
+              <div id="category-chart-empty" class="chart-empty" style="display:none;">
+                <span style="font-size:32px">🗺️</span><p>No destinations yet</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cute-card">
+          <div class="cute-card-header">
+            <h3 class="cute-card-title">🌟 Recent Activity</h3>
+            <a href="#" class="link-action" onclick="navigateTo('destinations',document.querySelector('[data-view=destinations]'))">
+              View all <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+          <div id="recent-activity"></div>
+        </div>
+      </div>
+
+      <!-- TRIP PLANNING VIEW -->
+      <div id="view-trip" class="view trip-view" style="display:none;">
+        <div class="trip-back-bar">
+          <button class="trip-back-btn" onclick="closeTripView()">
+            <i class="fas fa-arrow-left"></i> Back to Destinations
+          </button>
+        </div>
+
+        <div class="trip-hero" id="trip-hero">
+          <div class="trip-hero-emoji" id="trip-hero-emoji">✈️</div>
+          <div class="trip-hero-info">
+            <div class="trip-hero-cat" id="trip-hero-cat">Category</div>
+            <h2 class="trip-hero-name" id="trip-hero-name">Destination Name</h2>
+            <div class="trip-hero-meta" id="trip-hero-meta"></div>
+          </div>
+          <div class="trip-hero-badges" id="trip-hero-badges"></div>
+        </div>
+
+        <div class="trip-grid">
+          <section class="cute-card">
+            <div class="cute-card-header">
+              <h3 class="cute-card-title">🗓️ Itinerary</h3>
+              <span class="pill pill--pink" id="itinerary-count">0 items</span>
+            </div>
+            <form id="itinerary-form" class="trip-form" onsubmit="addItineraryItem(event)" novalidate>
+              <div class="trip-form-row">
+                <div class="trip-form-group">
+                  <label>Day</label>
+                  <input type="number" id="itin-day" class="cute-input" placeholder="1" min="1" value="1">
+                </div>
+                <div class="trip-form-group">
+                  <label>Time</label>
+                  <input type="time" id="itin-time" class="cute-input" value="08:00">
+                </div>
+              </div>
+              <div class="trip-form-group">
+                <label>Activity ✨</label>
+                <input type="text" id="itin-activity" class="cute-input" placeholder="e.g. Visit the flower market" required>
+              </div>
+              <div class="trip-form-group">
+                <label>Location 📍</label>
+                <input type="text" id="itin-location" class="cute-input" placeholder="e.g. Đà Lạt Night Market">
+              </div>
+              <div class="trip-form-group">
+                <label>Quick Note</label>
+                <input type="text" id="itin-note" class="cute-input" placeholder="e.g. Bring cash, wear comfy shoes">
+              </div>
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-plus-circle"></i> Add to Itinerary
+              </button>
+            </form>
+            <div id="itinerary-list" class="itinerary-list"></div>
+          </section>
+
+          <div class="trip-right-col">
+            <section class="cute-card">
+              <div class="cute-card-header">
+                <h3 class="cute-card-title">📝 My Notes</h3>
+              </div>
+              <div style="padding:16px 20px;">
+                <textarea id="trip-general-note" class="cute-textarea"
+                  placeholder="Write anything here — packing list, tips, must-eats 🍜…" rows="6"
+                  oninput="autoSaveNote()"></textarea>
+                <p class="note-autosave-hint" id="note-saved-hint">✓ Saved!</p>
+              </div>
+            </section>
+
+            <section class="cute-card">
+              <div class="cute-card-header">
+                <h3 class="cute-card-title">📊 Quick Stats</h3>
+              </div>
+              <div class="trip-stats-grid">
+                <div class="trip-stat">
+                  <div class="trip-stat-value" id="stat-days">—</div>
+                  <div class="trip-stat-label">Days Planned</div>
+                </div>
+                <div class="trip-stat">
+                  <div class="trip-stat-value" id="stat-activities">0</div>
+                  <div class="trip-stat-label">Activities</div>
+                </div>
+                <div class="trip-stat">
+                  <div class="trip-stat-value" id="stat-budget">0 ₫</div>
+                  <div class="trip-stat-label">Est. Budget</div>
+                </div>
+                <div class="trip-stat">
+                  <div class="trip-stat-value" id="stat-status">—</div>
+                  <div class="trip-stat-label">Status</div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESTINATIONS -->
+      <div id="view-destinations" class="view" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Destinations 📍</h1>
+            <p class="page-subtitle">Manage all the places you want to explore 🌸</p>
+          </div>
+          <button class="btn-primary" onclick="openDestModal()">
+            <i class="fas fa-plus"></i> Add Destination
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="dest-search" placeholder="Search destinations…" oninput="filterDestinations()">
+          </div>
+          <select id="dest-filter-cat" class="filter-select" onchange="filterDestinations()">
+            <option value="all">All Categories</option>
+          </select>
+          <select id="dest-filter-status" class="filter-select" onchange="filterDestinations()">
+            <option value="all">All Status</option>
+            <option value="0">Planned</option>
+            <option value="1">Visited</option>
+          </select>
+          <select id="dest-sort" class="filter-select" onchange="filterDestinations()">
+            <option value="priority-desc">Priority: High → Low</option>
+            <option value="priority-asc">Priority: Low → High</option>
+            <option value="budget-desc">Budget: High → Low</option>
+            <option value="budget-asc">Budget: Low → High</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <div class="table-scroll">
+            <table id="dest-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Budget (VND)</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Budget Source</th>
+                  <th class="text-center">Trip Plan</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dest-tbody"></tbody>
+            </table>
+          </div>
+          <div id="dest-empty" class="empty-state" style="display:none;">
+            <span style="font-size:40px">🗺️</span>
+            <p>No destinations found</p>
+            <small>Try adjusting your filters or add a new destination ✨</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUDGETS -->
+      <div id="view-budgets" class="view" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Budgets 💰</h1>
+            <p class="page-subtitle">Manage your funding sources and track allocations 🌸</p>
+          </div>
+          <button class="btn-primary" onclick="openBudgetModal()">
+            <i class="fas fa-plus"></i> Add Source
+          </button>
+        </div>
+
+        <div id="budget-cards" class="budget-cards-grid"></div>
+
+        <div class="table-card" style="margin-top:24px;">
+          <div class="cute-card-header" style="padding:18px 22px;border-bottom:1.5px solid var(--border);">
+            <h3 class="cute-card-title">📋 All Sources</h3>
+          </div>
+          <div class="table-scroll">
+            <table id="budget-table">
+              <thead>
+                <tr>
+                  <th>Source Name</th>
+                  <th class="text-right">Initial Amount</th>
+                  <th class="text-right">Allocated</th>
+                  <th class="text-right">Remaining</th>
+                  <th class="text-center">Destinations</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="budget-tbody"></tbody>
+            </table>
+          </div>
+          <div id="budget-empty" class="empty-state" style="display:none;">
+            <span style="font-size:40px">💸</span>
+            <p>No budget sources defined</p>
+            <small>Add a budget source to get started 🌸</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="view-settings" class="view" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Settings ⚙️</h1>
+            <p class="page-subtitle">Manage your account and preferences 🌸</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="cute-card">
+            <div class="cute-card-header">
+              <h3 class="cute-card-title">👤 Profile Information</h3>
+            </div>
+            <div style="padding:22px;">
+              <div class="profile-top">
+                <div class="profile-avatar-big" id="settings-avatar">ST</div>
+                <div>
+                  <h4 id="settings-display-name" style="font-size:18px;font-weight:700;margin-bottom:4px;color:var(--text);">Student Traveler</h4>
+                  <p style="color:var(--text-muted);font-size:13px;">✈️ Travel Planner</p>
+                </div>
+              </div>
+              <form id="profile-form" onsubmit="saveProfile(event)" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="settings-username" class="cute-input" placeholder="Username">
+                  </div>
+                  <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="settings-fullname" class="cute-input" placeholder="Your full name">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="settings-email" class="cute-input" placeholder="email@example.com">
+                  </div>
+                  <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="settings-phone" class="cute-input" placeholder="0123456789">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>New Password <span style="color:var(--text-muted);font-weight:400;">(leave blank to keep current)</span></label>
+                  <input type="password" id="settings-password" class="cute-input" placeholder="Min. 6 characters">
+                </div>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="cute-card danger-card">
+            <div class="cute-card-header">
+              <h3 class="cute-card-title" style="color:var(--danger);">⚠️ Danger Zone</h3>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+              <div class="danger-item">
+                <div>
+                  <h4 style="font-weight:600;margin-bottom:4px;color:var(--text);font-size:14px;">Reset Demo Data</h4>
+                  <p style="color:var(--text-muted);font-size:13px;">Delete all current data and restore the original demo dataset.</p>
+                </div>
+                <button class="btn-danger" onclick="confirmReset()">
+                  <i class="fas fa-undo"></i> Reset
+                </button>
+              </div>
+              <div class="danger-item">
+                <div>
+                  <h4 style="font-weight:600;margin-bottom:4px;color:var(--text);font-size:14px;">Delete My Account</h4>
+                  <p style="color:var(--text-muted);font-size:13px;">Permanently delete your account and all associated data.</p>
+                </div>
+                <button class="btn-danger" onclick="confirmDeleteAccount()">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Destination Modal -->
+  <div id="dest-modal" class="modal-overlay" style="display:none;" onclick="closeModalBackdrop(event,'dest-modal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="dest-modal-title">📍 Add Destination</h3>
+        <button class="modal-close-btn" onclick="closeModal('dest-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="dest-form" onsubmit="saveDestination(event)" novalidate>
+          <input type="hidden" id="dest-edit-id">
+          <div class="form-group">
+            <label>Destination Name <span class="required">*</span></label>
+            <input type="text" id="dest-name" class="cute-input" placeholder="e.g. Da Lat Highlands">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category <span class="required">*</span></label>
+              <input type="text" id="dest-category" class="cute-input" placeholder="e.g. Mountain, Beach">
+            </div>
+            <div class="form-group">
+              <label>Budget (VND) <span class="required">*</span></label>
+              <input type="number" id="dest-budget" class="cute-input" placeholder="e.g. 2500000" min="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Priority <span class="required">*</span></label>
+              <select id="dest-priority" class="cute-input">
+                <option value="1">1 — Very Low</option>
+                <option value="2">2 — Low</option>
+                <option value="3" selected>3 — Medium</option>
+                <option value="4">4 — High</option>
+                <option value="5">5 — Very High ⭐</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Status <span class="required">*</span></label>
+              <select id="dest-status" class="cute-input">
+                <option value="0">Planned</option>
+                <option value="1">Visited</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Budget Source <span class="required">*</span></label>
+            <select id="dest-source" class="cute-input"></select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-ghost" onclick="closeModal('dest-modal')">Cancel</button>
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Modal -->
+  <div id="budget-modal" class="modal-overlay" style="display:none;" onclick="closeModalBackdrop(event,'budget-modal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="budget-modal-title">💰 Add Budget Source</h3>
+        <button class="modal-close-btn" onclick="closeModal('budget-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="budget-form" onsubmit="saveBudgetSource(event)" novalidate>
+          <input type="hidden" id="budget-edit-id">
+          <div class="form-group">
+            <label>Source Name <span class="required">*</span></label>
+            <input type="text" id="budget-source-name" class="cute-input" placeholder="e.g. Savings Account">
+          </div>
+          <div class="form-group">
+            <label>Initial Amount (VND) <span class="required">*</span></label>
+            <input type="number" id="budget-source-amount" class="cute-input" placeholder="e.g. 5000000" min="0">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-ghost" onclick="closeModal('budget-modal')">Cancel</button>
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box modal-box--sm">
+      <div class="modal-header">
+        <h3 id="confirm-modal-title">Confirm Action</h3>
+        <button class="modal-close-btn" onclick="closeModal('confirm-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-body">
+          <div class="confirm-icon">⚠️</div>
+          <p id="confirm-modal-message">Are you sure? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+          <button class="btn-danger" id="confirm-action-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

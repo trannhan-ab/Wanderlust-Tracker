@@ -1,0 +1,24 @@
+{
+  "name": "wanderlust-tracker",
+  "version": "1.0.0",
+  "description": "* **Tên dự án:** Xây dựng hệ thống quản lý mục tiêu trải nghiệm và ngân sách cá nhân \"Wanderlust Tracker\".\r * **Mục tiêu:** Ứng dụng ngôn ngữ Python để tạo ra một công cụ CLI giúp người dùng lập kế hoạch, theo dõi tiến độ các địa điểm muốn khám phá, đồng thời quản lý tối ưu nguồn lực tài chính cá nhân.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trannhan-ab/Wanderlust-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/trannhan-ab/Wanderlust-Tracker/issues"
+  },
+  "homepage": "https://github.com/trannhan-ab/Wanderlust-Tracker#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
