@@ -14,5 +14,13 @@
     "email": "bbbb@gmail.com",
     "phone": "0987654321",
     "password": "123456"
+  },
+  {
+    "user_id": 3,
+    "fullname": "phamvana",
+    "username": "phamvana3",
+    "email": "nfhkf@gmail.com",
+    "phone": "0896745231",
+    "password": "123456"
   }
 ]

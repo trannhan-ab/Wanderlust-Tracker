@@ -22,5 +22,11 @@
     "source_name": "My Savings",
     "init_amount": 5000000,
     "user_id": 2
+  },
+  {
+    "source_id": 5,
+    "source_name": "My Savings",
+    "init_amount": 5000000,
+    "user_id": 3
   }
 ]
