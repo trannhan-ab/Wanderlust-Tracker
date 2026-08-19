@@ -6,7 +6,9 @@
     "budget": 3500000,
     "priority": 5,
     "status": 1,
-    "source_id": 1
+    "source_id": 1,
+    "start_date": "2026-08-01",
+    "end_date": "2026-08-06"
   },
   {
     "id": 2,
@@ -15,7 +17,9 @@
     "budget": 8200000,
     "priority": 4,
     "status": 0,
-    "source_id": 1
+    "source_id": 1,
+    "start_date": "2026-09-18",
+    "end_date": "2026-09-22"
   },
   {
     "id": 3,
@@ -24,7 +28,9 @@
     "budget": 4800000,
     "priority": 3,
     "status": 1,
-    "source_id": 2
+    "source_id": 2,
+    "start_date": "2026-07-10",
+    "end_date": "2026-07-13"
   },
   {
     "id": 4,
@@ -33,7 +39,9 @@
     "budget": 3000000,
     "priority": 5,
     "status": 0,
-    "source_id": 2
+    "source_id": 2,
+    "start_date": "2026-10-02",
+    "end_date": "2026-10-06"
   },
   {
     "id": 5,
@@ -42,6 +50,8 @@
     "budget": 2200000,
     "priority": 4,
     "status": 0,
-    "source_id": 3
+    "source_id": 3,
+    "start_date": "2026-11-12",
+    "end_date": "2026-11-16"
   }
 ]

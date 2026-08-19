@@ -28,5 +28,23 @@
     "source_name": "My Savings",
     "init_amount": 5000000,
     "user_id": 3
+  },
+  {
+    "source_id": 6,
+    "source_name": "My Savings",
+    "init_amount": 5000000,
+    "user_id": 4
+  },
+  {
+    "source_id": 7,
+    "user_id": 1,
+    "source_name": "Freelance Writing",
+    "init_amount": 500000
+  },
+  {
+    "source_id": 8,
+    "source_name": "My Savings",
+    "init_amount": 5000000,
+    "user_id": 5
   }
 ]

@@ -14,6 +14,10 @@ const FILES = {
   destinations: path.join(DATA_DIR, "destinations.json"),
   // Created only when the itinerary feature first saves data.
   trips: path.join(DATA_DIR, "trips.json"),
+  groupFund: path.join(DATA_DIR, "groupFund.json"),
+  groups: path.join(DATA_DIR, "groups.json"),
+  groupMembers: path.join(DATA_DIR, "groupMembers.json"),
+  contributions: path.join(DATA_DIR, "contributions.json"),
 };
 
 const DEMO_DATA = {
@@ -116,7 +120,10 @@ function readJSON(type, fallback = []) {
   }
 
   if (!fs.existsSync(filePath)) {
-    if (type === "trips") {
+    // These files are optional on a fresh install.  The group-fund feature
+    // needs all four of them, so create an empty collection instead of
+    // throwing a 500 error when the app is started without a data folder.
+    if (["trips", "groupFund", "groups", "groupMembers", "contributions"].includes(type)) {
       writeJSON(type, fallback);
       return fallback;
     }
@@ -159,6 +166,22 @@ function nextId(records, field) {
   );
 }
 
+function makeInviteCode(groups) {
+  let code = "";
+  do {
+    code = Math.random().toString(36).slice(2, 8).toUpperCase();
+  } while (groups.some((group) => group.invite_code === code));
+  return code;
+}
+
+function isGroupMember(groupId, userId) {
+  return readJSON("groupMembers").some(
+    (member) =>
+      Number(member.group_id) === Number(groupId) &&
+      Number(member.user_id) === Number(userId),
+  );
+}
+
 function stringValue(body, field, fallback = "") {
   if (body[field] === undefined || body[field] === null) {
     return fallback;
@@ -172,6 +195,8 @@ function numberValue(body, field, fallback = 0) {
 }
 
 function validateDestination(body, existing = {}) {
+  const startDate = stringValue(body, "start_date", existing.start_date || "");
+  const endDate = stringValue(body, "end_date", existing.end_date || "");
   const destination = {
     name: stringValue(body, "name", existing.name),
     category: stringValue(body, "category", existing.category),
@@ -181,6 +206,9 @@ function validateDestination(body, existing = {}) {
     source_id: Math.round(
       numberValue(body, "source_id", existing.source_id ?? 0),
     ),
+    // Dates belong to the destination itself, not to a shared/global trip.
+    start_date: startDate,
+    end_date: endDate,
   };
 
   if (!destination.name) {
@@ -200,6 +228,15 @@ function validateDestination(body, existing = {}) {
   }
   if (!destination.source_id) {
     return { error: "A budget source is required." };
+  }
+  if (
+    (startDate && !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) ||
+    (endDate && !/^\d{4}-\d{2}-\d{2}$/.test(endDate))
+  ) {
+    return { error: "Dates must use the YYYY-MM-DD format." };
+  }
+  if (startDate && endDate && endDate < startDate) {
+    return { error: "End date cannot be before start date." };
   }
 
   return { value: destination };
@@ -276,6 +313,10 @@ function resetDemoData() {
   }
 
   writeJSON("trips", []);
+  writeJSON("groupFund", []);
+  writeJSON("groups", []);
+  writeJSON("groupMembers", []);
+  writeJSON("contributions", []);
 }
 
 // The existing public/index.html is served unchanged.
@@ -659,6 +700,160 @@ app.put("/trips", (req, res) => {
 
   writeJSON("trips", trips);
   return res.json(validation.value);
+});
+
+app.get("/group-fund", (req, res) => {
+  const funds = readJSON("groupFund");
+  const userId = req.query.user_id ? Number(req.query.user_id) : null;
+  return res.json(userId ? funds.filter((fund) => Number(fund.user_id) === userId) : funds);
+});
+
+app.put("/group-fund", (req, res) => {
+  const funds = readJSON("groupFund");
+  const index = funds.findIndex((fund) => Number(fund.user_id) === Number(req.body.user_id));
+  const fund = {
+    fund_id: index >= 0 ? funds[index].fund_id : Date.now(),
+    user_id: Number(req.body.user_id),
+    goal: Math.max(0, Number(req.body.goal || 0)),
+    contributions: Array.isArray(req.body.contributions) ? req.body.contributions : [],
+  };
+  if (!fund.user_id) return sendError(res, 400, "A user is required.");
+  if (index >= 0) funds[index] = fund; else funds.push(fund);
+  writeJSON("groupFund", funds);
+  return res.json(fund);
+});
+
+// Shared group funds
+app.get("/groups", (req, res) => {
+  const userId = Number(req.query.user_id);
+  if (!userId) return res.json([]);
+  const memberships = readJSON("groupMembers").filter(
+    (member) => Number(member.user_id) === userId,
+  );
+  const allMembers = readJSON("groupMembers");
+  const groups = readJSON("groups");
+  return res.json(
+    groups
+      .filter((group) =>
+        memberships.some((member) => Number(member.group_id) === Number(group.group_id)),
+      )
+      .map((group) => ({
+        ...group,
+        member_count: allMembers.filter(
+          (member) => Number(member.group_id) === Number(group.group_id),
+        ).length,
+      })),
+  );
+});
+
+app.post("/groups", (req, res) => {
+  const groups = readJSON("groups");
+  const members = readJSON("groupMembers");
+  const ownerId = Math.round(Number(req.body.owner_id));
+  const name = stringValue(req.body, "name");
+  const goal = Number(req.body.goal);
+  if (!ownerId || !name) return sendError(res, 400, "Fund name and owner are required.");
+  if (!Number.isFinite(goal) || goal < 0) return sendError(res, 400, "A valid, non-negative goal is required.");
+  if (!readJSON("users").some((user) => Number(user.user_id) === ownerId)) {
+    return sendError(res, 400, "The fund owner account was not found.");
+  }
+
+  const group = {
+    group_id: nextId(groups, "group_id"),
+    name,
+    goal,
+    invite_code: makeInviteCode(groups),
+    owner_id: ownerId,
+    created_at: new Date().toISOString().slice(0, 10),
+  };
+  groups.push(group);
+  members.push({
+    group_id: group.group_id,
+    user_id: ownerId,
+    role: "owner",
+    joined_at: group.created_at,
+  });
+  writeJSON("groups", groups);
+  writeJSON("groupMembers", members);
+  return res.status(201).json({ ...group, member_count: 1 });
+});
+
+app.post("/groups/join", (req, res) => {
+  const code = stringValue(req.body, "invite_code").toUpperCase();
+  const userId = Math.round(Number(req.body.user_id));
+  const group = readJSON("groups").find((item) => item.invite_code === code);
+  if (!group) return sendError(res, 404, "Invalid invite code.");
+  if (!userId) return sendError(res, 400, "A user is required.");
+  if (isGroupMember(group.group_id, userId)) {
+    return sendError(res, 409, "You are already a member of this fund.");
+  }
+  const members = readJSON("groupMembers");
+  members.push({
+    group_id: group.group_id,
+    user_id: userId,
+    role: "member",
+    joined_at: new Date().toISOString().slice(0, 10),
+  });
+  writeJSON("groupMembers", members);
+  return res.json({ ...group, member_count: members.filter((m) => Number(m.group_id) === group.group_id).length });
+});
+
+app.get("/groups/:id", (req, res) => {
+  const groupId = Number(req.params.id);
+  const userId = Number(req.query.user_id);
+  const group = readJSON("groups").find((item) => item.group_id === groupId);
+  if (!group) return sendError(res, 404, "Fund not found.");
+  if (!isGroupMember(groupId, userId)) return sendError(res, 403, "You are not a member of this fund.");
+  const users = readJSON("users");
+  const members = readJSON("groupMembers")
+    .filter((member) => Number(member.group_id) === groupId)
+    .map((member) => ({
+      ...member,
+      user: safeUser(users.find((user) => Number(user.user_id) === Number(member.user_id))),
+    }));
+  const contributions = readJSON("contributions")
+    .filter((item) => Number(item.group_id) === groupId)
+    .map((item) => ({
+      ...item,
+      user: safeUser(users.find((user) => Number(user.user_id) === Number(item.user_id))),
+    }));
+  return res.json({ ...group, members, contributions });
+});
+
+app.post("/groups/:id/contributions", (req, res) => {
+  const groupId = Number(req.params.id);
+  const userId = Math.round(Number(req.body.user_id));
+  const amount = Number(req.body.amount);
+  if (!isGroupMember(groupId, userId)) return sendError(res, 403, "You are not a member of this fund.");
+  if (!Number.isFinite(amount) || amount <= 0) return sendError(res, 400, "Contribution must be greater than zero.");
+  const contributions = readJSON("contributions");
+  const contribution = {
+    contribution_id: nextId(contributions, "contribution_id"),
+    group_id: groupId,
+    user_id: userId,
+    amount,
+    note: stringValue(req.body, "note"),
+    created_at: new Date().toISOString().slice(0, 10),
+  };
+  contributions.push(contribution);
+  writeJSON("contributions", contributions);
+  return res.status(201).json(contribution);
+});
+
+app.delete("/groups/:groupId/contributions/:id", (req, res) => {
+  const groupId = Number(req.params.groupId);
+  const contributionId = Number(req.params.id);
+  const userId = Number(req.body.user_id);
+  const contribution = readJSON("contributions").find(
+    (item) => item.contribution_id === contributionId && Number(item.group_id) === groupId,
+  );
+  const group = readJSON("groups").find((item) => item.group_id === groupId);
+  if (!contribution || !group) return sendError(res, 404, "Contribution not found.");
+  if (Number(contribution.user_id) !== userId && Number(group.owner_id) !== userId) {
+    return sendError(res, 403, "You cannot delete this contribution.");
+  }
+  writeJSON("contributions", readJSON("contributions").filter((item) => item.contribution_id !== contributionId));
+  return res.json({ message: "Contribution deleted." });
 });
 
 app.post("/data/reset", (_req, res) => {

@@ -13,6 +13,9 @@ const state = {
   budgets: [],
   dests: [],
   trips: [],
+  groupFunds: [],
+  groups: [],
+  activeGroup: null,
   sessionId: null,
   currentUser: null,
 };
@@ -35,16 +38,18 @@ async function apiRequest(url, options = {}) {
 }
 
 async function loadServerData() {
-  const [users, budgets, dests, trips] = await Promise.all([
+  const [users, budgets, dests, trips, groupFunds] = await Promise.all([
     apiRequest("/users"),
     apiRequest("/budgets"),
     apiRequest("/destinations"),
     apiRequest("/trips"),
+    apiRequest("/group-fund"),
   ]);
   state.users = users;
   state.budgets = budgets;
   state.dests = dests;
   state.trips = trips;
+  state.groupFunds = groupFunds;
 }
 
 function queueWrite(type, data) {
@@ -240,6 +245,7 @@ function checkSession() {
 }
 function enterApp(user) {
   hideEl("auth-section"); showEl("app-section"); updateUserDisplay(user);
+  loadSharedGroups();
   navigateTo("dashboard", document.querySelector('[data-view="dashboard"]'), true);
 }
 function updateUserDisplay(user) {
@@ -257,12 +263,13 @@ function navigateTo(viewName, linkEl, skipHistory) {
   (linkEl || document.querySelector(`[data-view="${viewName}"]`))?.classList.add("active");
   document.querySelectorAll(".view").forEach((node) => { node.style.display = "none"; });
   el(`view-${viewName}`)?.style.removeProperty("display");
-  const titles = { dashboard: "Dashboard", destinations: "Destinations", budgets: "Budgets", settings: "Settings" };
+  const titles = { dashboard: "Dashboard", destinations: "Destinations", budgets: "Budgets", "group-fund": "Group Fund", settings: "Settings" };
   setText("topbar-page-title", titles[viewName] || viewName);
   currentView = viewName; closeSidebar();
   if (viewName === "dashboard") renderDashboard();
   if (viewName === "destinations") renderDestinations();
   if (viewName === "budgets") renderBudgets();
+  if (viewName === "group-fund") renderGroupFund();
   if (viewName === "settings") renderSettings();
 }
 function toggleSidebar() { el("sidebar")?.classList.toggle("open"); el("sidebar-overlay")?.classList.toggle("visible"); }
@@ -371,6 +378,89 @@ function renderRecentActivity() {
 }
 
 function renderDestinations() { populateCategoryFilter(); filterDestinations(); }
+async function loadSharedGroups() {
+  const user = getCurrentUser();
+  if (!user) return;
+  try {
+    state.groups = await apiRequest(`/groups?user_id=${user.user_id}`);
+    if (currentView === "group-fund") renderGroupFund();
+  } catch (error) { showToast(error.message, "error"); }
+}
+function renderGroupFund() {
+  const list = el("shared-fund-list");
+  if (!list) return;
+  if (!state.groups.length) {
+    list.innerHTML = '<div class="activity-empty">You have not created or joined a shared fund yet.</div>';
+    hideEl("shared-fund-detail");
+    return;
+  }
+  list.innerHTML = state.groups.map((group) => `<button class="btn-plan-trip" style="margin:6px;" onclick="openSharedFund(${group.group_id})">${escHtml(group.name)} · ${group.member_count} member${group.member_count === 1 ? "" : "s"}</button>`).join("");
+  if (state.activeGroup) openSharedFund(state.activeGroup.group_id);
+}
+async function createSharedFund(event) {
+  event.preventDefault();
+  const user = getCurrentUser();
+  if (!user?.user_id) return showToast("Please sign in again before creating a fund.", "error");
+  const name = el("new-group-name").value.trim();
+  const goalInput = el("new-group-goal").value.trim();
+  const goal = Number(goalInput);
+  if (!name || !goalInput || !Number.isFinite(goal) || goal < 0) return showToast("Please enter a valid fund name and goal.", "error");
+  try {
+    const group = await apiRequest("/groups", { method: "POST", body: JSON.stringify({ name, goal, owner_id: user.user_id }) });
+    state.groups.push(group);
+    el("new-group-name").value = ""; el("new-group-goal").value = "";
+    renderGroupFund(); await openSharedFund(group.group_id); showToast("Shared fund created!", "success");
+  } catch (error) { showToast(error.message, "error"); }
+}
+async function joinSharedFund(event) {
+  event.preventDefault();
+  const user = getCurrentUser();
+  const invite_code = el("join-group-code").value.trim().toUpperCase();
+  if (!invite_code) return showToast("Please enter an invite code.", "error");
+  try {
+    const group = await apiRequest("/groups/join", { method: "POST", body: JSON.stringify({ invite_code, user_id: user.user_id }) });
+    state.groups = state.groups.filter((item) => item.group_id !== group.group_id).concat(group);
+    el("join-group-code").value = ""; renderGroupFund(); await openSharedFund(group.group_id); showToast("You joined the shared fund!", "success");
+  } catch (error) { showToast(error.message, "error"); }
+}
+async function openSharedFund(groupId) {
+  const user = getCurrentUser();
+  try {
+    const group = await apiRequest(`/groups/${groupId}?user_id=${user.user_id}`);
+    state.activeGroup = group;
+    const total = group.contributions.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    const goal = Number(group.goal || 0);
+    const percentage = goal ? Math.min(100, total / goal * 100) : 0;
+    setText("shared-fund-name", group.name); setText("shared-fund-code", `Invite code: ${group.invite_code}`);
+    setText("shared-fund-members", `${group.members.length} member${group.members.length === 1 ? "" : "s"}`);
+    setText("shared-fund-total", formatVND(total)); setText("shared-fund-goal", formatVND(goal));
+    setText("shared-fund-progress-label", `${percentage.toFixed(1)}% of your goal`);
+    if (el("shared-fund-progress")) el("shared-fund-progress").style.width = percentage + "%";
+    setHTML("shared-fund-member-list", group.members.map((member) => `<p><strong>${escHtml(member.user?.fullname || member.user?.username || "Member")}</strong> <small>(${escHtml(member.role)})</small></p>`).join(""));
+    setHTML("shared-fund-contribution-list", group.contributions.map((item) => `<div class="group-fund-contribution"><strong>${escHtml(item.user?.fullname || item.user?.username || "Member")}</strong><small>${escHtml(item.note || "")} · ${escHtml(item.created_at)}</small><span>${formatVND(item.amount)} <button class="btn-icon btn-icon--danger" onclick="deleteSharedContribution(${item.contribution_id})"><i class="fas fa-trash"></i></button></span></div>`).join("") || '<div class="activity-empty">No contributions yet.</div>');
+    showEl("shared-fund-detail");
+  } catch (error) { showToast(error.message, "error"); }
+}
+async function addSharedContribution(event) {
+  event.preventDefault();
+  const user = getCurrentUser();
+  if (!state.activeGroup) return showToast("Select a fund first.", "error");
+  const amount = Number(el("shared-contribution-amount").value);
+  if (!Number.isFinite(amount) || amount <= 0) return showToast("Please enter a valid amount.", "error");
+  try {
+    await apiRequest(`/groups/${state.activeGroup.group_id}/contributions`, { method: "POST", body: JSON.stringify({ user_id: user.user_id, amount, note: el("shared-contribution-note").value.trim() }) });
+    el("shared-contribution-amount").value = ""; el("shared-contribution-note").value = "";
+    await openSharedFund(state.activeGroup.group_id); showToast("Contribution added!", "success");
+  } catch (error) { showToast(error.message, "error"); }
+}
+async function deleteSharedContribution(contributionId) {
+  const user = getCurrentUser();
+  if (!state.activeGroup) return;
+  try {
+    await apiRequest(`/groups/${state.activeGroup.group_id}/contributions/${contributionId}`, { method: "DELETE", body: JSON.stringify({ user_id: user.user_id }) });
+    await openSharedFund(state.activeGroup.group_id); showToast("Contribution deleted.", "info");
+  } catch (error) { showToast(error.message, "error"); }
+}
 function populateCategoryFilter() {
   const select = el("dest-filter-cat");
   if (!select) return;
@@ -430,9 +520,14 @@ function openDestModal(destination) {
     el("dest-name").value = destination.name; el("dest-category").value = destination.category;
     el("dest-budget").value = destination.budget; el("dest-priority").value = destination.priority;
     el("dest-status").value = destination.status; source.value = destination.source_id;
+    // Load dates from this destination only. Do not reuse another row's values.
+    el("dest-start-date").value = destination.start_date || "";
+    el("dest-end-date").value = destination.end_date || "";
   } else {
     setText("dest-modal-title", "Add Destination"); el("dest-form").reset(); el("dest-edit-id").value = "";
     el("dest-priority").value = "3"; el("dest-status").value = "0";
+    el("dest-start-date").value = "";
+    el("dest-end-date").value = "";
     if (budgets.length) source.value = budgets[0].source_id;
   }
   openModal("dest-modal");
@@ -442,12 +537,15 @@ async function saveDestination(event) {
   const name = el("dest-name").value.trim(), category = el("dest-category").value.trim();
   const budget = Number(el("dest-budget").value), priority = Number(el("dest-priority").value);
   const status = Number(el("dest-status").value), sourceId = Number(el("dest-source").value);
+  const startDate = el("dest-start-date")?.value || "";
+  const endDate = el("dest-end-date")?.value || "";
   const editId = el("dest-edit-id").value;
   if (!name || !category || !Number.isFinite(budget) || budget < 0 || !sourceId) return showToast("Please complete all destination fields.", "error");
+  if (startDate && endDate && endDate < startDate) return showToast("End date cannot be before start date.", "error");
   try {
     const result = await apiRequest(editId ? `/destinations/${editId}` : "/destinations", {
       method: editId ? "PUT" : "POST",
-      body: JSON.stringify({ name, category, budget, priority, status, source_id: sourceId }),
+      body: JSON.stringify({ name, category, budget, priority, status, source_id: sourceId, start_date: startDate, end_date: endDate }),
     });
     if (editId) state.dests = state.dests.map((item) => item.id === Number(editId) ? result : item);
     else state.dests.push(result);

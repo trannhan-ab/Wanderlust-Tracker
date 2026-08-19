@@ -22,5 +22,21 @@
     "email": "nfhkf@gmail.com",
     "phone": "0896745231",
     "password": "123456"
+  },
+  {
+    "user_id": 4,
+    "fullname": "hagiang",
+    "username": "hagiang4",
+    "email": "giang123@gmail.com",
+    "phone": "0987654321",
+    "password": "123456"
+  },
+  {
+    "user_id": 5,
+    "fullname": "hagiang",
+    "username": "hagiang5",
+    "email": "abcdf@gmail.con",
+    "phone": "0987654321",
+    "password": "123456"
   }
 ]

@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "dest_id": 1,
+    "user_id": 1,
+    "items": [
+      {
+        "id": 1,
+        "day": 1,
+        "time": "08:00",
+        "activity": "đi mua sắm",
+        "location": "chợ đêm đà lạt",
+        "note": "mang ví, máy ảnh"
+      }
+    ],
+    "general_note": ""
+  }
+]

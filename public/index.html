@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -143,6 +145,10 @@
           <span class="nav-icon">💰</span>
           <span class="nav-label">Budgets</span>
         </a>
+        <a href="#" class="nav-item" data-view="group-fund" onclick="navigateTo('group-fund',this)">
+          <span class="nav-icon">🤝</span>
+          <span class="nav-label">Group Fund</span>
+        </a>
         <a href="#" class="nav-item" data-view="settings" onclick="navigateTo('settings',this)">
           <span class="nav-icon">⚙️</span>
           <span class="nav-label">Settings</span>
@@ -226,6 +232,10 @@
           </div>
         </div>
 
+        <div id="next-trip-card" class="next-trip-card" style="display:none;">
+          <div class="next-trip-icon">🌸</div><div class="next-trip-info"><p class="next-trip-label">Your next adventure</p><h3 id="next-trip-name">—</h3><p id="next-trip-dates" class="next-trip-dates">—</p></div>
+          <div class="next-trip-countdown"><strong id="next-trip-countdown">—</strong><span id="next-trip-countdown-label">until departure</span></div>
+        </div>
         <div class="charts-row">
           <div class="cute-card chart-card">
             <div class="cute-card-header">
@@ -284,6 +294,7 @@
           <div class="trip-hero-badges" id="trip-hero-badges"></div>
         </div>
 
+        <div id="trip-countdown" class="trip-countdown" style="display:none;"><div class="trip-countdown-icon">⏰</div><div><p class="trip-countdown-label">Countdown to your trip</p><strong id="trip-countdown-value">—</strong><span id="trip-countdown-status">—</span></div></div>
         <div class="trip-grid">
           <section class="cute-card">
             <div class="cute-card-header">
@@ -460,6 +471,61 @@
         </div>
       </div>
 
+      <div id="view-group-fund" class="view" style="display:none;">
+        <div class="page-header">
+          <div><h1 class="page-title">Group Fund 🤝</h1><p class="page-subtitle">Create or join a shared travel fund 🌸</p></div>
+        </div>
+        <div class="group-fund-grid">
+          <section class="cute-card group-fund-form-body">
+            <h3>✨ Create a shared fund</h3>
+            <form onsubmit="createSharedFund(event)">
+              <input id="new-group-name" class="cute-input" placeholder="Fund name, e.g. Da Lat Trip 2026" required>
+              <input type="number" id="new-group-goal" class="cute-input" min="0" placeholder="Target amount" required>
+              <button class="btn-primary" type="submit">Create Fund</button>
+            </form>
+          </section>
+          <section class="cute-card group-fund-form-body">
+            <h3>🔗 Join an existing fund</h3>
+            <form onsubmit="joinSharedFund(event)">
+              <input id="join-group-code" class="cute-input" placeholder="Enter invite code, e.g. DALAT26" required>
+              <button class="btn-primary" type="submit">Join Fund</button>
+            </form>
+          </section>
+        </div>
+        <section class="cute-card">
+          <div class="cute-card-header"><h3 class="cute-card-title">📂 My shared funds</h3></div>
+          <div id="shared-fund-list" class="group-fund-list"></div>
+        </section>
+        <section id="shared-fund-detail" class="cute-card" style="display:none;">
+          <div class="cute-card-header">
+            <div><h3 class="cute-card-title" id="shared-fund-name">Shared Fund</h3><p id="shared-fund-code" style="color:var(--text-muted);font-size:13px;"></p></div>
+            <span class="pill pill--pink" id="shared-fund-members">0 members</span>
+          </div>
+          <div class="group-fund-summary">
+            <h2 id="shared-fund-total">0 ₫</h2>
+            <p id="shared-fund-progress-label">0% of your goal</p>
+            <div class="group-fund-progress-track"><div id="shared-fund-progress" class="group-fund-progress-fill"></div></div>
+            <p>Goal: <strong id="shared-fund-goal">0 ₫</strong></p>
+          </div>
+          <div class="group-fund-grid">
+            <section class="group-fund-form-body">
+              <h3>💸 Add your contribution</h3>
+              <form onsubmit="addSharedContribution(event)">
+                <input type="number" id="shared-contribution-amount" class="cute-input" min="1" placeholder="Amount" required>
+                <input id="shared-contribution-note" class="cute-input" placeholder="Note">
+                <button class="btn-primary" type="submit">Add Contribution</button>
+              </form>
+            </section>
+            <section class="group-fund-form-body">
+              <h3>👥 Members</h3>
+              <div id="shared-fund-member-list"></div>
+            </section>
+          </div>
+          <div class="cute-card-header" style="padding-left:0;padding-right:0;"><h3 class="cute-card-title">📋 Contribution History</h3></div>
+          <div id="shared-fund-contribution-list"></div>
+        </section>
+      </div>
+
       <!-- SETTINGS -->
       <div id="view-settings" class="view" style="display:none;">
         <div class="page-header">
@@ -588,6 +654,16 @@
                 <option value="0">Planned</option>
                 <option value="1">Visited</option>
               </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" id="dest-start-date" class="cute-input">
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" id="dest-end-date" class="cute-input">
             </div>
           </div>
           <div class="form-group">
