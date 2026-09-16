@@ -46,5 +46,11 @@
     "source_name": "My Savings",
     "init_amount": 5000000,
     "user_id": 5
+  },
+  {
+    "source_id": 9,
+    "user_id": 1,
+    "source_name": "tiền lương",
+    "init_amount": 15000000
   }
 ]

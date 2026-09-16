@@ -45,6 +45,10 @@ const MAP_SEED_COORDS = {
   "da nang": [16.0544, 108.2022],
   "hai phong": [20.8449, 106.6881],
   "hải phòng": [20.8449, 106.6881],
+  "ha long": [20.9101, 107.1839],
+  "hạ long": [20.9101, 107.1839],
+  "cat ba": [20.7278, 107.0482],
+  "cát bà": [20.7278, 107.0482],
 };
 
 function el(id) { return document.getElementById(id); }
@@ -748,18 +752,56 @@ function saveMapStorage(value) {
 function mapKey(destination) {
   return `${destination.id}:${String(destination.name || "").trim().toLowerCase()}`;
 }
+function normalizePlaceName(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[đĐ]/g, "d")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
 function knownMapCoords(name) {
-  const normalized = String(name || "").toLowerCase();
-  const match = Object.keys(MAP_SEED_COORDS).find((key) => normalized.includes(key));
-  return match ? MAP_SEED_COORDS[match] : null;
+  const normalized = normalizePlaceName(name);
+  const match = Object.keys(MAP_SEED_COORDS).find((key) => normalized.includes(normalizePlaceName(key)));
+  return match ? [...MAP_SEED_COORDS[match]] : null;
 }
 function coordsForDestination(destination) {
   const lat = Number(destination.latitude ?? destination.lat);
   const lng = Number(destination.longitude ?? destination.lng);
   if (Number.isFinite(lat) && Number.isFinite(lng)) return [lat, lng];
   const stored = mapStorage()[mapKey(destination)];
-  if (Array.isArray(stored) && stored.length === 2) return stored;
+  if (Array.isArray(stored) && stored.length === 2 &&
+      Number.isFinite(Number(stored[0])) && Number.isFinite(Number(stored[1]))) {
+    return [Number(stored[0]), Number(stored[1])];
+  }
   return knownMapCoords(destination.name);
+}
+async function geocodeDestination(destination) {
+  const known = knownMapCoords(destination.name);
+  if (known) return known;
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=vi&countrycodes=vn&q=${encodeURIComponent(`${destination.name}, Việt Nam`)}`
+    );
+    if (!response.ok) return null;
+    const results = await response.json();
+    const lat = Number(results[0]?.lat);
+    const lng = Number(results[0]?.lon);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
+  } catch (_) {
+    return null;
+  }
+}
+async function ensureDestinationCoords(destination) {
+  const existing = coordsForDestination(destination);
+  if (existing) return existing;
+  const coords = await geocodeDestination(destination);
+  if (!coords) return null;
+  const storage = mapStorage();
+  storage[mapKey(destination)] = coords;
+  saveMapStorage(storage);
+  return coords;
 }
 function mapMarkerIcon(visited) {
   return L.divIcon({
@@ -795,7 +837,7 @@ function renderMap() {
   setTimeout(() => state.map?.invalidateSize(), 80);
   renderMapDestinationList();
   renderMapMarkers();
-  hydrateMapCoordinates();
+  void hydrateMapCoordinates();
 }
 function renderMapDestinationList() {
   const destinations = userDestinations();
@@ -839,28 +881,33 @@ function renderMapMarkers() {
 async function hydrateMapCoordinates() {
   const destinations = userDestinations().filter((destination) => !coordsForDestination(destination)).slice(0, 6);
   if (!destinations.length) return;
-  const storage = mapStorage();
-  await Promise.all(destinations.map(async (destination) => {
-    try {
-       const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=vi&countrycodes=vn&q=${encodeURIComponent(`${destination.name}, Việt Nam`)}`);
-      const results = await response.json();
-      if (results[0]) storage[mapKey(destination)] = [Number(results[0].lat), Number(results[0].lon)];
-    } catch (_) { /* The map still works with known locations and user search. */ }
-  }));
-  saveMapStorage(storage);
+  await Promise.all(destinations.map((destination) => ensureDestinationCoords(destination)));
   if (currentView === "map") { renderMapDestinationList(); renderMapMarkers(); }
 }
-function focusDestinationOnMap(id) {
+async function focusDestinationOnMap(id) {
   const destination = userDestinations().find((item) => Number(item.id) === Number(id));
-  const coords = destination && coordsForDestination(destination);
   if (!destination) return;
+  let coords = coordsForDestination(destination);
+  if (!coords) {
+    setText("map-status", `Đang tìm "${destination.name}"…`);
+    coords = await ensureDestinationCoords(destination);
+    if (coords) {
+      renderMapDestinationList();
+      renderMapMarkers();
+    }
+  }
   if (!coords) {
     el("map-search-input").value = destination.name;
     return searchMapPlace();
   }
   state.map?.flyTo(coords, 12, { duration: 0.8 });
   const marker = state.mapMarkers.find((item) => item.options.title === destination.name);
-  marker?.openPopup();
+  if (marker) marker.openPopup();
+  else showToast("Đã tìm thấy địa điểm nhưng chưa tạo được ghim bản đồ.", "info");
+}
+function openDestinationMap(id) {
+  navigateTo("map", document.querySelector('[data-view="map"]'));
+  window.setTimeout(() => { void focusDestinationOnMap(id); }, 120);
 }
 function fitAllDestinations() {
   if (!state.map) return;
@@ -1071,7 +1118,7 @@ function renderDestinationsTable(destinations, budgets) {
        <td><span class="badge badge--${visited ? "visited" : "planned"}"><i class="fas ${visited ? "fa-check" : "fa-clock"}"></i>${visited ? "Đã ghé thăm" : "Đang lên kế hoạch"}</span></td>
       <td style="color:var(--text-muted);font-size:13px;">${source ? escHtml(source.source_name) : "—"}</td>
        <td class="text-center"><button class="btn-plan-trip" onclick="openTripView(${destination.id})">🗺️ Mở${trip.items.length ? ` (${trip.items.length})` : ""}</button></td>
-       <td><div class="action-btns"><button class="btn-icon" onclick="editDestination(${destination.id})" title="Chỉnh sửa"><i class="fas fa-pen"></i></button><button class="btn-icon btn-icon--danger" onclick="confirmDeleteDest(${destination.id})" title="Xóa"><i class="fas fa-trash"></i></button></div></td>
+       <td><div class="action-btns"><button class="btn-icon" onclick="openDestinationMap(${destination.id})" title="Xem trên bản đồ"><i class="fas fa-map"></i></button><button class="btn-icon" onclick="editDestination(${destination.id})" title="Chỉnh sửa"><i class="fas fa-pen"></i></button><button class="btn-icon btn-icon--danger" onclick="confirmDeleteDest(${destination.id})" title="Xóa"><i class="fas fa-trash"></i></button></div></td>
     </tr>`;
   }).join("");
 }
