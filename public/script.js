@@ -63,12 +63,19 @@ async function apiRequest(url, options = {}) {
   if (!["GET", "HEAD", "OPTIONS"].includes(method) && state.csrfToken && !options.skipCsrf) {
     headers["X-CSRF-Token"] = state.csrfToken;
   }
-  const response = await fetch(url, {
-    credentials: "same-origin",
-    ...options,
-    method,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      credentials: "same-origin",
+      ...options,
+      method,
+      headers,
+    });
+  } catch (_) {
+    const error = new Error("Không thể kết nối đến máy chủ. Hãy kiểm tra server và thử lại.");
+    error.status = 0;
+    throw error;
+  }
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(payload.message || "Không thể hoàn tất yêu cầu.");
@@ -230,6 +237,21 @@ function showAuthError(id, message) {
   if (node) { node.textContent = message; node.style.display = "block"; }
 }
 function hideAuthError(id) { hideEl(id); }
+function setFormBusy(formId, busy, busyLabel = "Đang xử lý…") {
+  const submit = el(formId)?.querySelector('button[type="submit"]');
+  if (!submit) return;
+  if (busy) {
+    if (!submit.dataset.originalHtml) submit.dataset.originalHtml = submit.innerHTML;
+    submit.disabled = true;
+    submit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${busyLabel}`;
+  } else {
+    submit.disabled = false;
+    if (submit.dataset.originalHtml) {
+      submit.innerHTML = submit.dataset.originalHtml;
+      delete submit.dataset.originalHtml;
+    }
+  }
+}
 
 function showLogin(event) {
   if (event) event.preventDefault();
@@ -249,6 +271,7 @@ async function handleLogin(event) {
   const password = el("login-password").value;
   if (!usernameOrEmail || !password) return showAuthError("login-error", "Vui lòng điền đầy đủ thông tin.");
 
+  setFormBusy("login-form", true, "Đang đăng nhập…");
   try {
     const result = await apiRequest("/auth/login", {
       method: "POST", skipCsrf: true, body: JSON.stringify({ usernameOrEmail, password }),
@@ -261,6 +284,8 @@ async function handleLogin(event) {
     enterApp(result.user);
   } catch (error) {
     showAuthError("login-error", `${error.message} Try: demo / 123456789`);
+  } finally {
+    setFormBusy("login-form", false);
   }
 }
 
@@ -277,6 +302,7 @@ async function handleRegister(event) {
   if (password.length < 6) return showAuthError("register-error", "Mật khẩu phải có ít nhất 6 ký tự.");
   if (password !== confirm) return showAuthError("register-error", "Mật khẩu xác nhận không khớp.");
 
+  setFormBusy("register-form", true, "Đang tạo tài khoản…");
   try {
     const result = await apiRequest("/auth/register", {
       method: "POST", skipCsrf: true, body: JSON.stringify({ fullname, email, phone, password }),
@@ -290,6 +316,8 @@ async function handleRegister(event) {
     enterApp(result.user);
   } catch (error) {
     showAuthError("register-error", error.message);
+  } finally {
+    setFormBusy("register-form", false);
   }
 }
 
@@ -881,7 +909,10 @@ function renderMapMarkers() {
 async function hydrateMapCoordinates() {
   const destinations = userDestinations().filter((destination) => !coordsForDestination(destination)).slice(0, 6);
   if (!destinations.length) return;
-  await Promise.all(destinations.map((destination) => ensureDestinationCoords(destination)));
+  // Nominatim asks clients to avoid bursts of parallel requests.
+  for (const destination of destinations) {
+    await ensureDestinationCoords(destination);
+  }
   if (currentView === "map") { renderMapDestinationList(); renderMapMarkers(); }
 }
 async function focusDestinationOnMap(id) {
@@ -1154,6 +1185,7 @@ async function saveDestination(event) {
   if (!name || !category || !Number.isFinite(budget) || budget < 0 || !sourceId) return showToast("Vui lòng điền đủ thông tin điểm đến.", "error");
   if (startDate && endDate && endDate < startDate) return showToast("Ngày kết thúc không thể trước ngày bắt đầu.", "error");
   const previousStatus = editId ? getDests().find((item) => item.id === Number(editId))?.status : null;
+  setFormBusy("dest-form", true, "Đang lưu…");
   try {
     const result = await apiRequest(editId ? `/destinations/${editId}` : "/destinations", {
       method: editId ? "PUT" : "POST",
@@ -1176,6 +1208,7 @@ async function saveDestination(event) {
        showToast(editId ? "Đã cập nhật điểm đến!" : "Đã thêm điểm đến!", "success");
     }
   } catch (error) { showToast(error.message, "error"); }
+  finally { setFormBusy("dest-form", false); }
 }
 function editDestination(id) { const destination = getDests().find((item) => item.id === id); if (destination) openDestModal(destination); }
 function confirmDeleteDest(id) {

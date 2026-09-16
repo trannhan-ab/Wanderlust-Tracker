@@ -874,6 +874,10 @@ button:disabled {
   transform: none !important;
 }
 
+button:disabled .fa-spinner {
+  animation: fa-spin 1s linear infinite;
+}
+
 #main-content {
   background:
     radial-gradient(circle at 92% 2%, rgba(243, 232, 255, 0.58), transparent 22rem),
