@@ -5,11 +5,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wanderlust Tracker 🌸</title>
+  <title>Wanderlust Tracker</title>
   <meta name="description" content="Trợ lý lập kế hoạch du lịch và quản lý ngân sách">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -30,9 +30,9 @@
 
     <div class="auth-wrapper">
       <div class="auth-brand">
-        <div class="auth-brand-icon"></div>
+        <div class="auth-brand-icon"><i class="fas fa-compass"></i></div>
         <h1>Wanderlust Tracker</h1>
-        <p>Trợ lý kế hoạch du lịch & ngân sách ✈️</p>
+        <p>Trợ lý kế hoạch du lịch & ngân sách</p>
       </div>
 
       <!-- Login Screen -->
@@ -127,7 +127,7 @@
     <aside id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <div class="logo-icon"></div>
+          <div class="logo-icon"><i class="fas fa-route"></i></div>
           <div class="logo-text">
             <h2>Wanderlust</h2>
             <span>Quản lý hành trình</span>
@@ -137,28 +137,28 @@
 
       <nav class="sidebar-nav">
         <a href="#" class="nav-item active" data-view="dashboard" onclick="navigateTo('dashboard',this)">
-          <span class="nav-icon">🏠</span>
-          <span class="nav-label">Tổng quan</span>
+          <span class="nav-icon"><i class="fas fa-chart-pie"></i></span>
+          <span class="nav-label">Dashboard</span>
         </a>
         <a href="#" class="nav-item" data-view="destinations" onclick="navigateTo('destinations',this)">
-          <span class="nav-icon">📍</span>
-          <span class="nav-label">Điểm đến</span>
+          <span class="nav-icon"><i class="fas fa-location-dot"></i></span>
+          <span class="nav-label">Destinations</span>
         </a>
         <a href="#" class="nav-item" data-view="map" onclick="navigateTo('map',this)">
-          <span class="nav-icon">🗺️</span>
-          <span class="nav-label">Bản đồ</span>
+          <span class="nav-icon"><i class="fas fa-map"></i></span>
+          <span class="nav-label">Map</span>
         </a>
         <a href="#" class="nav-item" data-view="budgets" onclick="navigateTo('budgets',this)">
-          <span class="nav-icon">💰</span>
-          <span class="nav-label">Ngân sách</span>
+          <span class="nav-icon"><i class="fas fa-wallet"></i></span>
+          <span class="nav-label">Budgets</span>
         </a>
         <a href="#" class="nav-item" data-view="group-fund" onclick="navigateTo('group-fund',this)">
-          <span class="nav-icon">🤝</span>
-          <span class="nav-label">Quỹ nhóm</span>
+          <span class="nav-icon"><i class="fas fa-people-group"></i></span>
+          <span class="nav-label">Group Fund</span>
         </a>
         <a href="#" class="nav-item" data-view="settings" onclick="navigateTo('settings',this)">
-          <span class="nav-icon">⚙️</span>
-          <span class="nav-label">Cài đặt</span>
+          <span class="nav-icon"><i class="fas fa-sliders"></i></span>
+          <span class="nav-label">Settings</span>
         </a>
       </nav>
 
@@ -167,7 +167,7 @@
           <div class="sidebar-avatar" id="sidebar-avatar">ST</div>
           <div class="sidebar-user-info">
             <p class="sidebar-user-name" id="sidebar-username">Bạn</p>
-            <p class="sidebar-user-role">✈️ Người lập kế hoạch</p>
+            <p class="sidebar-user-role"><i class="fas fa-compass"></i> Người lập kế hoạch</p>
           </div>
         </div>
         <button class="btn-logout" onclick="logout()" title="Đăng xuất">
@@ -874,7 +874,7 @@
   </div>
 
   <!-- Toast Container -->
-  <div id="toast-container"></div>
+  <div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="/script.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

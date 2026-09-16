@@ -363,7 +363,7 @@ function navigateTo(viewName, linkEl, skipHistory) {
     void activeView.offsetWidth;
     activeView.classList.add("view-enter");
   }
-  const titles = { dashboard: "Tổng quan", destinations: "Điểm đến", map: "Bản đồ", budgets: "Ngân sách", "group-fund": "Quỹ nhóm", settings: "Cài đặt" };
+  const titles = { dashboard: "Dashboard", destinations: "Destinations", map: "Map", budgets: "Budgets", "group-fund": "Group Fund", settings: "Settings" };
   setText("topbar-page-title", titles[viewName] || viewName);
   currentView = viewName; closeSidebar();
   if (viewName === "dashboard") renderDashboard();
@@ -1347,7 +1347,7 @@ function openTripView(destId) {
   document.querySelectorAll(".view").forEach((node) => { node.style.display = "none"; });
   el("view-trip").style.display = "";
   document.querySelectorAll(".nav-item").forEach((node) => node.classList.remove("active"));
-  setText("topbar-page-title", "✈️ Lịch trình");
+  setText("topbar-page-title", "Trip Planner");
   renderTripHero(destination); renderTripStats(destination); renderTripCountdown(destination); renderItineraryList(); renderTripExpenses(destination); loadGeneralNote(); closeSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
