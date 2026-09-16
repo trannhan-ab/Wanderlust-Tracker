@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Da Lat Highlands",
+    "name": "Da Lat",
     "category": "Mountain",
     "budget": 3500000,
     "priority": 5,
@@ -53,5 +53,16 @@
     "source_id": 3,
     "start_date": "2026-11-12",
     "end_date": "2026-11-16"
+  },
+  {
+    "id": 6,
+    "name": "Hai Phong",
+    "category": "City",
+    "budget": 1000000,
+    "priority": 3,
+    "status": 0,
+    "source_id": 3,
+    "start_date": "2026-09-18",
+    "end_date": "2026-09-19"
   }
 ]
