@@ -5,7 +5,7 @@
     "username": "demo",
     "email": "demo@wanderlust.vn",
     "phone": "0987654321",
-    "password": "123456789"
+    "password": "scrypt$a3ce49c5bc98667d4ee17b60e412b15d$c4b21cfd00081535618e63a86fdf3f2f86d94018408feab787f921fc052f3844c83f4725dc6232ac1a3bce75e23cbb4316ec2f25ae9e497ff63159efcf1cddb8"
   },
   {
     "user_id": 2,

@@ -10,11 +10,5 @@
     "user_id": 5,
     "role": "member",
     "joined_at": "2026-08-19"
-  },
-  {
-    "group_id": 2,
-    "user_id": 1,
-    "role": "owner",
-    "joined_at": "2026-08-19"
   }
 ]

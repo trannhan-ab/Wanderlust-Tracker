@@ -1,17 +1,20 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wanderlust Tracker 🌸</title>
-  <meta name="description" content="Your soft pastel travel planning and budget hub">
+  <meta name="description" content="Trợ lý lập kế hoạch du lịch và quản lý ngân sách">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -29,51 +32,51 @@
       <div class="auth-brand">
         <div class="auth-brand-icon"></div>
         <h1>Wanderlust Tracker</h1>
-        <p>Your travel planning & budget hub ✈️</p>
+        <p>Trợ lý kế hoạch du lịch & ngân sách ✈️</p>
       </div>
 
       <!-- Login Screen -->
       <div id="login-screen" class="auth-card">
         <div class="auth-card-emoji"></div>
-        <h2>Welcome back!</h2>
-        <p class="auth-subtitle">Sign in to continue your journey~</p>
+        <h2>Chào mừng bạn trở lại!</h2>
+        <p class="auth-subtitle">Đăng nhập để tiếp tục hành trình của bạn nhé~</p>
         <div id="login-error" class="auth-error" style="display:none;"></div>
         <form id="login-form" novalidate>
           <div class="form-group">
-            <label for="login-username">Username or Email</label>
+            <label for="login-username">Tên đăng nhập hoặc email</label>
             <div class="input-wrapper">
               <i class="fas fa-user input-icon"></i>
-              <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username">
+              <input type="text" id="login-username" placeholder="Nhập tên đăng nhập" autocomplete="username">
             </div>
           </div>
           <div class="form-group">
-            <label for="login-password">Password</label>
+            <label for="login-password">Mật khẩu</label>
             <div class="input-wrapper">
               <i class="fas fa-lock input-icon"></i>
-              <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+              <input type="password" id="login-password" placeholder="Nhập mật khẩu" autocomplete="current-password">
               <button type="button" class="pw-toggle" onclick="togglePw('login-password',this)" tabindex="-1">
                 <i class="fas fa-eye"></i>
               </button>
             </div>
           </div>
-          <button type="submit" class="btn-primary btn-full">Sign In</button>
+          <button type="submit" class="btn-primary btn-full">Đăng nhập</button>
         </form>
-        <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister(event)">Register now ✨</a></p>
-        <p class="auth-demo">Demo: <strong>demo</strong> / <strong>123456789</strong></p>
+        <p class="auth-switch">Chưa có tài khoản? <a href="#" onclick="showRegister(event)">Đăng ký ngay ✨</a></p>
+        <p class="auth-demo">Tài khoản mẫu: <strong>demo</strong> / <strong>123456789</strong></p>
       </div>
 
       <!-- Register Screen -->
       <div id="register-screen" class="auth-card" style="display:none;">
         <div class="auth-card-emoji"></div>
-        <h2>Create Account</h2>
-        <p class="auth-subtitle">Join Wanderlust and start your adventure~</p>
+        <h2>Tạo tài khoản</h2>
+        <p class="auth-subtitle">Tham gia Wanderlust và bắt đầu chuyến đi của bạn~</p>
         <div id="register-error" class="auth-error" style="display:none;"></div>
         <form id="register-form" novalidate>
           <div class="form-group">
-            <label for="reg-fullname">Full Name</label>
+            <label for="reg-fullname">Họ và tên</label>
             <div class="input-wrapper">
               <i class="fas fa-id-card input-icon"></i>
-              <input type="text" id="reg-fullname" placeholder="Your full name">
+              <input type="text" id="reg-fullname" placeholder="Nhập họ và tên">
             </div>
           </div>
           <div class="form-row">
@@ -85,34 +88,34 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="reg-phone">Phone</label>
+              <label for="reg-phone">Số điện thoại</label>
               <div class="input-wrapper">
                 <i class="fas fa-phone input-icon"></i>
-                <input type="tel" id="reg-phone" placeholder="0123456789">
+              <input type="tel" id="reg-phone" placeholder="Nhập số điện thoại">
               </div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="reg-password">Password</label>
+              <label for="reg-password">Mật khẩu</label>
               <div class="input-wrapper">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="reg-password" placeholder="Min. 6 characters">
+              <input type="password" id="reg-password" placeholder="Tối thiểu 6 ký tự">
                 <button type="button" class="pw-toggle" onclick="togglePw('reg-password',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
               </div>
             </div>
             <div class="form-group">
-              <label for="reg-confirm">Confirm</label>
+              <label for="reg-confirm">Xác nhận mật khẩu</label>
               <div class="input-wrapper">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="reg-confirm" placeholder="Repeat password">
+              <input type="password" id="reg-confirm" placeholder="Nhập lại mật khẩu">
                 <button type="button" class="pw-toggle" onclick="togglePw('reg-confirm',this)" tabindex="-1"><i class="fas fa-eye"></i></button>
               </div>
             </div>
           </div>
-          <button type="submit" class="btn-primary btn-full">Create Account</button>
+          <button type="submit" class="btn-primary btn-full">Tạo tài khoản</button>
         </form>
-        <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin(event)">Sign in</a></p>
+        <p class="auth-switch">Đã có tài khoản? <a href="#" onclick="showLogin(event)">Đăng nhập</a></p>
       </div>
     </div>
   </section>
@@ -127,7 +130,7 @@
           <div class="logo-icon"></div>
           <div class="logo-text">
             <h2>Wanderlust</h2>
-            <span>Travel Tracker</span>
+            <span>Quản lý hành trình</span>
           </div>
         </div>
       </div>
@@ -135,23 +138,27 @@
       <nav class="sidebar-nav">
         <a href="#" class="nav-item active" data-view="dashboard" onclick="navigateTo('dashboard',this)">
           <span class="nav-icon">🏠</span>
-          <span class="nav-label">Dashboard</span>
+          <span class="nav-label">Tổng quan</span>
         </a>
         <a href="#" class="nav-item" data-view="destinations" onclick="navigateTo('destinations',this)">
           <span class="nav-icon">📍</span>
-          <span class="nav-label">Destinations</span>
+          <span class="nav-label">Điểm đến</span>
+        </a>
+        <a href="#" class="nav-item" data-view="map" onclick="navigateTo('map',this)">
+          <span class="nav-icon">🗺️</span>
+          <span class="nav-label">Bản đồ</span>
         </a>
         <a href="#" class="nav-item" data-view="budgets" onclick="navigateTo('budgets',this)">
           <span class="nav-icon">💰</span>
-          <span class="nav-label">Budgets</span>
+          <span class="nav-label">Ngân sách</span>
         </a>
         <a href="#" class="nav-item" data-view="group-fund" onclick="navigateTo('group-fund',this)">
           <span class="nav-icon">🤝</span>
-          <span class="nav-label">Group Fund</span>
+          <span class="nav-label">Quỹ nhóm</span>
         </a>
         <a href="#" class="nav-item" data-view="settings" onclick="navigateTo('settings',this)">
           <span class="nav-icon">⚙️</span>
-          <span class="nav-label">Settings</span>
+          <span class="nav-label">Cài đặt</span>
         </a>
       </nav>
 
@@ -159,11 +166,11 @@
         <div class="sidebar-user">
           <div class="sidebar-avatar" id="sidebar-avatar">ST</div>
           <div class="sidebar-user-info">
-            <p class="sidebar-user-name" id="sidebar-username">Student</p>
-            <p class="sidebar-user-role">✈️ Travel Planner</p>
+            <p class="sidebar-user-name" id="sidebar-username">Bạn</p>
+            <p class="sidebar-user-role">✈️ Người lập kế hoạch</p>
           </div>
         </div>
-        <button class="btn-logout" onclick="logout()" title="Logout">
+        <button class="btn-logout" onclick="logout()" title="Đăng xuất">
           <i class="fas fa-sign-out-alt"></i>
         </button>
       </div>
@@ -179,7 +186,7 @@
         <button class="hamburger" onclick="toggleSidebar()">
           <i class="fas fa-bars"></i>
         </button>
-        <span class="topbar-title" id="topbar-page-title">Dashboard</span>
+        <span class="topbar-title" id="topbar-page-title">Tổng quan</span>
         <div class="topbar-right">
           <div class="topbar-user">
             <div class="topbar-avatar" id="topbar-avatar">ST</div>
@@ -192,60 +199,109 @@
       <div id="view-dashboard" class="view">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Dashboard 🌸</h1>
-            <p class="page-subtitle">Here's your travel overview, let's go! ✈️</p>
+            <h1 class="page-title">Tổng quan 🌸</h1>
+            <p class="page-subtitle">Toàn cảnh hành trình của bạn, cùng bắt đầu nhé! ✈️</p>
+            <p class="page-date" id="current-date" aria-live="polite"></p>
           </div>
         </div>
 
-        <div class="metrics-grid">
+        <div class="greeting-banner" id="greeting-banner">
+          <div class="greeting-text">
+            <p class="greeting-hello" id="greeting-hello">Xin chào</p>
+            <h2 id="greeting-name">Chào mừng trở lại! 🌸</h2>
+            <p class="greeting-quote" id="greeting-quote"></p>
+          </div>
+          <div class="greeting-emoji" id="greeting-emoji">🌸</div>
+        </div>
+
+        <div class="achievements-strip" id="achievements-strip"></div>
+
+        <div class="metrics-grid metrics-grid--finance">
           <div class="metric-card metric-card--pink">
-            <div class="metric-icon-wrap">📍</div>
+            <div class="metric-icon-wrap">💰</div>
             <div class="metric-body">
-              <p class="metric-label">Total Destinations</p>
-              <h3 class="metric-value" id="metric-total">0</h3>
-              <p class="metric-sub" id="metric-total-sub">Across all categories</p>
+               <p class="metric-label">Tổng quỹ</p>
+              <h3 class="metric-value metric-value--sm" id="metric-funds">0 ₫</h3>
+                <p class="metric-sub" id="metric-funds-sub">0 nguồn tiền</p>
             </div>
           </div>
           <div class="metric-card metric-card--mint">
-            <div class="metric-icon-wrap">✅</div>
+            <div class="metric-icon-wrap">🗓️</div>
             <div class="metric-body">
-              <p class="metric-label">Visited</p>
-              <h3 class="metric-value" id="metric-visited">0</h3>
-              <p class="metric-sub" id="metric-visited-sub">0% completion</p>
+               <p class="metric-label">Dự toán chuyến đi</p>
+              <h3 class="metric-value metric-value--sm" id="metric-planned">0 ₫</h3>
+                <p class="metric-sub" id="metric-planned-sub">0% tổng quỹ</p>
             </div>
           </div>
           <div class="metric-card metric-card--lavender">
-            <div class="metric-icon-wrap">💰</div>
+            <div class="metric-icon-wrap">🧾</div>
             <div class="metric-body">
-              <p class="metric-label">Total Budget</p>
-              <h3 class="metric-value metric-value--sm" id="metric-budget">0 ₫</h3>
-              <p class="metric-sub" id="metric-budget-sub">From 0 sources</p>
+               <p class="metric-label">Đã chi thực tế</p>
+              <h3 class="metric-value metric-value--sm" id="metric-actual">0 ₫</h3>
+                <p class="metric-sub" id="metric-actual-sub">0 khoản chi</p>
             </div>
           </div>
           <div class="metric-card metric-card--peach">
-            <div class="metric-icon-wrap">🌿</div>
+            <div class="metric-icon-wrap">🌱</div>
             <div class="metric-body">
-              <p class="metric-label">Remaining Budget</p>
-              <h3 class="metric-value metric-value--sm" id="metric-remaining">0 ₫</h3>
-              <p class="metric-sub">Available to allocate</p>
+               <p class="metric-label">Số dư còn lại</p>
+              <h3 class="metric-value metric-value--sm" id="metric-cash">0 ₫</h3>
+                <p class="metric-sub" id="metric-cash-sub">Sau các khoản chi</p>
             </div>
           </div>
         </div>
+        <div id="budget-alerts" class="budget-alerts" style="display:none;"></div>
+
+        <div class="dashboard-insights">
+          <section class="cute-card finance-story-card">
+            <div class="cute-card-header">
+              <div>
+                 <p class="eyebrow">DÒNG TIỀN</p>
+                 <h3 class="cute-card-title">Tình hình ngân sách</h3>
+              </div>
+               <span class="pill pill--pink" id="finance-story-status">Đang ổn</span>
+            </div>
+            <div class="finance-story-body">
+               <div class="finance-story-row"><span><i class="finance-dot finance-dot--planned"></i> Dự toán</span><strong id="story-planned">0 ₫</strong></div>
+              <div class="finance-bar"><span id="story-planned-bar" class="finance-bar-fill finance-bar-fill--planned"></span></div>
+               <div class="finance-story-row"><span><i class="finance-dot finance-dot--actual"></i> Đã chi</span><strong id="story-actual">0 ₫</strong></div>
+              <div class="finance-bar"><span id="story-actual-bar" class="finance-bar-fill finance-bar-fill--actual"></span></div>
+               <div class="finance-story-footer"><span>Số dư sau khi chi tiêu</span><strong id="story-cash">0 ₫</strong></div>
+            </div>
+          </section>
+          <section class="cute-card itinerary-progress-card">
+            <div class="cute-card-header">
+              <div>
+                 <p class="eyebrow">TIẾN ĐỘ CHUYẾN ĐI</p>
+                 <h3 class="cute-card-title">Tiến độ lịch trình</h3>
+              </div>
+              <span class="pill pill--mint" id="itinerary-progress-value">0%</span>
+            </div>
+            <div class="itinerary-progress-body">
+              <div class="progress-ring" id="itinerary-progress-ring"><span id="itinerary-progress-percent">0%</span></div>
+              <div>
+               <strong id="itinerary-progress-caption">Chưa có hoạt động</strong>
+               <p id="itinerary-progress-meta">Thêm hoạt động để theo dõi tiến độ chuyến đi.</p>
+               <button class="btn-plan-trip" onclick="navigateTo('destinations',document.querySelector('[data-view=destinations]'))">Mở điểm đến <i class="fas fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </section>
+        </div>
 
         <div id="next-trip-card" class="next-trip-card" style="display:none;">
-          <div class="next-trip-icon">🌸</div><div class="next-trip-info"><p class="next-trip-label">Your next adventure</p><h3 id="next-trip-name">—</h3><p id="next-trip-dates" class="next-trip-dates">—</p></div>
-          <div class="next-trip-countdown"><strong id="next-trip-countdown">—</strong><span id="next-trip-countdown-label">until departure</span></div>
+           <div class="next-trip-icon">🌸</div><div class="next-trip-info"><p class="next-trip-label">Chuyến đi sắp tới</p><h3 id="next-trip-name">—</h3><p id="next-trip-dates" class="next-trip-dates">—</p></div>
+           <div class="next-trip-countdown"><strong id="next-trip-countdown">—</strong><span id="next-trip-countdown-label">đến ngày khởi hành</span></div>
         </div>
         <div class="charts-row">
           <div class="cute-card chart-card">
             <div class="cute-card-header">
-              <h3 class="cute-card-title">💸 Budget Sources</h3>
-              <span class="pill pill--pink">Allocation</span>
+               <h3 class="cute-card-title">💸 Nguồn ngân sách</h3>
+               <span class="pill pill--pink">Phân bổ</span>
             </div>
             <div class="donut-chart-area">
               <canvas id="budget-chart"></canvas>
               <div id="budget-chart-empty" class="chart-empty" style="display:none;">
-                <span style="font-size:32px">💸</span><p>No budget sources</p>
+                 <span style="font-size:32px">💸</span><p>Chưa có nguồn ngân sách</p>
               </div>
             </div>
             <div id="budget-chart-legend" class="chart-legend"></div>
@@ -253,13 +309,13 @@
 
           <div class="cute-card chart-card chart-card--wide">
             <div class="cute-card-header">
-              <h3 class="cute-card-title">🗺️ Destinations by Category</h3>
-              <span class="pill pill--lavender">Count</span>
+               <h3 class="cute-card-title">🗺️ Điểm đến theo nhóm</h3>
+               <span class="pill pill--lavender">Số lượng</span>
             </div>
             <div class="bar-chart-area">
               <canvas id="category-chart"></canvas>
               <div id="category-chart-empty" class="chart-empty" style="display:none;">
-                <span style="font-size:32px">🗺️</span><p>No destinations yet</p>
+                 <span style="font-size:32px">🗺️</span><p>Chưa có điểm đến</p>
               </div>
             </div>
           </div>
@@ -267,12 +323,61 @@
 
         <div class="cute-card">
           <div class="cute-card-header">
-            <h3 class="cute-card-title">🌟 Recent Activity</h3>
-            <a href="#" class="link-action" onclick="navigateTo('destinations',document.querySelector('[data-view=destinations]'))">
-              View all <i class="fas fa-arrow-right"></i>
+            <h3 class="cute-card-title">🌟 Hoạt động gần đây</h3>
+             <a href="#" class="link-action" onclick="navigateTo('destinations',document.querySelector('[data-view=destinations]'))">
+               Xem tất cả <i class="fas fa-arrow-right"></i>
             </a>
           </div>
           <div id="recent-activity"></div>
+        </div>
+      </div>
+
+      <!-- MAP -->
+      <div id="view-map" class="view map-view" style="display:none;">
+        <div class="page-header">
+          <div>
+            <p class="eyebrow">KHÁM PHÁ CÙNG WANDERLUST</p>
+             <h1 class="page-title">Bản đồ hành trình 🗺️</h1>
+             <p class="page-subtitle">Xem các điểm đến và biến từng chiếc ghim thành một kế hoạch rõ ràng.</p>
+          </div>
+           <button class="btn-primary" onclick="openDestModal()"><i class="fas fa-plus"></i> Thêm điểm đến</button>
+        </div>
+        <div class="map-toolbar cute-card">
+          <div class="map-search">
+            <i class="fas fa-location-dot"></i>
+             <input id="map-search-input" class="cute-input" placeholder="Tìm thành phố hoặc địa điểm…"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();searchMapPlace();}">
+             <button class="btn-primary btn-small" onclick="searchMapPlace()"><i class="fas fa-search"></i> Tìm kiếm</button>
+          </div>
+          <div class="map-toolbar-actions">
+             <button class="btn-ghost btn-small" onclick="fitAllDestinations()"><i class="fas fa-expand"></i> Hiện tất cả</button>
+             <button class="btn-ghost btn-small" onclick="openFullMapView()"><i class="fas fa-up-right-and-down-left-from-center"></i> Mở bản đồ lớn</button>
+             <span class="map-status" id="map-status"><i class="fas fa-circle"></i> Bản đồ sẵn sàng</span>
+          </div>
+        </div>
+        <div class="map-layout">
+          <section class="cute-card map-panel">
+            <div id="travel-map" aria-label="Map of destinations"></div>
+            <div class="map-legend">
+               <span><i class="map-dot map-dot--planned"></i> Đang lên kế hoạch</span>
+               <span><i class="map-dot map-dot--visited"></i> Đã ghé thăm</span>
+              <span class="map-data-note">© OpenStreetMap contributors</span>
+            </div>
+          </section>
+          <aside class="cute-card map-side-panel">
+            <div class="cute-card-header">
+               <div>
+                 <p class="eyebrow">BỘ SƯU TẬP CỦA BẠN</p>
+                 <h3 class="cute-card-title">Các điểm đến</h3>
+              </div>
+              <span class="pill pill--pink" id="map-destination-count">0 places</span>
+            </div>
+            <div id="map-destination-list" class="map-destination-list"></div>
+            <div class="map-tip">
+              <span class="map-tip-icon">💡</span>
+               <div><strong>Mẹo nhanh</strong><p>Bấm vào ghim để xem ngân sách, ngày đi và lịch trình.</p></div>
+            </div>
+          </aside>
         </div>
       </div>
 
@@ -280,53 +385,57 @@
       <div id="view-trip" class="view trip-view" style="display:none;">
         <div class="trip-back-bar">
           <button class="trip-back-btn" onclick="closeTripView()">
-            <i class="fas fa-arrow-left"></i> Back to Destinations
+             <i class="fas fa-arrow-left"></i> Quay lại điểm đến
           </button>
         </div>
 
         <div class="trip-hero" id="trip-hero">
           <div class="trip-hero-emoji" id="trip-hero-emoji">✈️</div>
           <div class="trip-hero-info">
-            <div class="trip-hero-cat" id="trip-hero-cat">Category</div>
-            <h2 class="trip-hero-name" id="trip-hero-name">Destination Name</h2>
+            <div class="trip-hero-cat" id="trip-hero-cat">Nhóm điểm đến</div>
+            <h2 class="trip-hero-name" id="trip-hero-name">Tên điểm đến</h2>
             <div class="trip-hero-meta" id="trip-hero-meta"></div>
           </div>
           <div class="trip-hero-badges" id="trip-hero-badges"></div>
         </div>
 
-        <div id="trip-countdown" class="trip-countdown" style="display:none;"><div class="trip-countdown-icon">⏰</div><div><p class="trip-countdown-label">Countdown to your trip</p><strong id="trip-countdown-value">—</strong><span id="trip-countdown-status">—</span></div></div>
+        <div id="trip-countdown" class="trip-countdown" style="display:none;"><div class="trip-countdown-icon">⏰</div><div><p class="trip-countdown-label">Đếm ngược đến chuyến đi</p><strong id="trip-countdown-value">—</strong><span id="trip-countdown-status">—</span></div></div>
         <div class="trip-grid">
           <section class="cute-card">
             <div class="cute-card-header">
-              <h3 class="cute-card-title">🗓️ Itinerary</h3>
-              <span class="pill pill--pink" id="itinerary-count">0 items</span>
+              <h3 class="cute-card-title">🗓️ Lịch trình</h3>
+              <span class="pill pill--pink" id="itinerary-count">0 hoạt động</span>
             </div>
             <form id="itinerary-form" class="trip-form" onsubmit="addItineraryItem(event)" novalidate>
+              <input type="hidden" id="itin-edit-id">
               <div class="trip-form-row">
                 <div class="trip-form-group">
-                  <label>Day</label>
+                  <label>Ngày</label>
                   <input type="number" id="itin-day" class="cute-input" placeholder="1" min="1" value="1">
                 </div>
                 <div class="trip-form-group">
-                  <label>Time</label>
+                  <label>Thời gian</label>
                   <input type="time" id="itin-time" class="cute-input" value="08:00">
                 </div>
               </div>
               <div class="trip-form-group">
-                <label>Activity ✨</label>
-                <input type="text" id="itin-activity" class="cute-input" placeholder="e.g. Visit the flower market" required>
+                <label>Hoạt động ✨</label>
+                <input type="text" id="itin-activity" class="cute-input" placeholder="Ví dụ: Tham quan chợ hoa" required>
               </div>
               <div class="trip-form-group">
-                <label>Location 📍</label>
-                <input type="text" id="itin-location" class="cute-input" placeholder="e.g. Đà Lạt Night Market">
+                <label>Địa điểm 📍</label>
+                <input type="text" id="itin-location" class="cute-input" placeholder="Ví dụ: Chợ đêm Đà Lạt">
               </div>
               <div class="trip-form-group">
-                <label>Quick Note</label>
-                <input type="text" id="itin-note" class="cute-input" placeholder="e.g. Bring cash, wear comfy shoes">
+                <label>Ghi chú nhanh</label>
+                <input type="text" id="itin-note" class="cute-input" placeholder="Ví dụ: Mang tiền mặt, đi giày thoải mái">
               </div>
-              <button type="submit" class="btn-primary">
-                <i class="fas fa-plus-circle"></i> Add to Itinerary
-              </button>
+              <div class="trip-form-actions">
+                <button type="submit" class="btn-primary" id="itin-submit-btn">
+                  <i class="fas fa-plus-circle"></i> Thêm vào lịch trình
+                </button>
+                <button type="button" class="btn-ghost" id="itin-cancel-btn" onclick="cancelItineraryEdit()" style="display:none;">Hủy chỉnh sửa</button>
+              </div>
             </form>
             <div id="itinerary-list" class="itinerary-list"></div>
           </section>
@@ -334,38 +443,57 @@
           <div class="trip-right-col">
             <section class="cute-card">
               <div class="cute-card-header">
-                <h3 class="cute-card-title">📝 My Notes</h3>
+                <h3 class="cute-card-title">📝 Ghi chú của tôi</h3>
               </div>
               <div style="padding:16px 20px;">
                 <textarea id="trip-general-note" class="cute-textarea"
-                  placeholder="Write anything here — packing list, tips, must-eats 🍜…" rows="6"
+                  placeholder="Viết danh sách đồ cần mang, mẹo nhỏ, món phải thử 🍜…" rows="6"
                   oninput="autoSaveNote()"></textarea>
-                <p class="note-autosave-hint" id="note-saved-hint">✓ Saved!</p>
+                <p class="note-autosave-hint" id="note-saved-hint">✓ Đã lưu!</p>
               </div>
             </section>
 
             <section class="cute-card">
               <div class="cute-card-header">
-                <h3 class="cute-card-title">📊 Quick Stats</h3>
+                <h3 class="cute-card-title">📊 Thống kê nhanh</h3>
               </div>
               <div class="trip-stats-grid">
                 <div class="trip-stat">
                   <div class="trip-stat-value" id="stat-days">—</div>
-                  <div class="trip-stat-label">Days Planned</div>
+                  <div class="trip-stat-label">Số ngày</div>
                 </div>
                 <div class="trip-stat">
                   <div class="trip-stat-value" id="stat-activities">0</div>
-                  <div class="trip-stat-label">Activities</div>
+                  <div class="trip-stat-label">Hoạt động</div>
                 </div>
                 <div class="trip-stat">
                   <div class="trip-stat-value" id="stat-budget">0 ₫</div>
-                  <div class="trip-stat-label">Est. Budget</div>
+                  <div class="trip-stat-label">Ngân sách dự kiến</div>
                 </div>
                 <div class="trip-stat">
                   <div class="trip-stat-value" id="stat-status">—</div>
-                  <div class="trip-stat-label">Status</div>
+                  <div class="trip-stat-label">Trạng thái</div>
                 </div>
               </div>
+            </section>
+            <section class="cute-card">
+              <div class="cute-card-header">
+                <h3 class="cute-card-title">💳 Chi phí thực tế</h3>
+                <span class="pill pill--pink" id="expense-total">0 ₫</span>
+              </div>
+              <form id="expense-form" class="expense-form" onsubmit="addExpense(event)" novalidate>
+                <div class="form-row">
+                  <input type="number" id="expense-amount" class="cute-input" min="1" placeholder="Số tiền (VNĐ)" required>
+                  <input type="date" id="expense-date" class="cute-input">
+                </div>
+                <div class="form-row">
+                  <input type="text" id="expense-category" class="cute-input" placeholder="Nhóm chi, ví dụ: Ăn uống">
+                  <input type="text" id="expense-note" class="cute-input" placeholder="Ghi chú">
+                </div>
+                <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Thêm khoản chi</button>
+              </form>
+              <div id="expense-progress" class="expense-progress"></div>
+              <div id="expense-list" class="expense-list"></div>
             </section>
           </div>
         </div>
@@ -375,32 +503,32 @@
       <div id="view-destinations" class="view" style="display:none;">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Destinations 📍</h1>
-            <p class="page-subtitle">Manage all the places you want to explore 🌸</p>
+            <h1 class="page-title">Điểm đến 📍</h1>
+            <p class="page-subtitle">Quản lý tất cả những nơi bạn muốn khám phá 🌸</p>
           </div>
           <button class="btn-primary" onclick="openDestModal()">
-            <i class="fas fa-plus"></i> Add Destination
+            <i class="fas fa-plus"></i> Thêm điểm đến
           </button>
         </div>
 
         <div class="filter-bar">
           <div class="search-box">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" id="dest-search" placeholder="Search destinations…" oninput="filterDestinations()">
+            <input type="text" id="dest-search" placeholder="Tìm điểm đến…" oninput="filterDestinations()">
           </div>
           <select id="dest-filter-cat" class="filter-select" onchange="filterDestinations()">
-            <option value="all">All Categories</option>
+            <option value="all">Tất cả nhóm</option>
           </select>
           <select id="dest-filter-status" class="filter-select" onchange="filterDestinations()">
-            <option value="all">All Status</option>
-            <option value="0">Planned</option>
-            <option value="1">Visited</option>
+            <option value="all">Tất cả trạng thái</option>
+            <option value="0">Đang lên kế hoạch</option>
+            <option value="1">Đã ghé thăm</option>
           </select>
           <select id="dest-sort" class="filter-select" onchange="filterDestinations()">
-            <option value="priority-desc">Priority: High → Low</option>
-            <option value="priority-asc">Priority: Low → High</option>
-            <option value="budget-desc">Budget: High → Low</option>
-            <option value="budget-asc">Budget: Low → High</option>
+            <option value="priority-desc">Ưu tiên: Cao → thấp</option>
+            <option value="priority-asc">Ưu tiên: Thấp → cao</option>
+            <option value="budget-desc">Ngân sách: Cao → thấp</option>
+            <option value="budget-asc">Ngân sách: Thấp → cao</option>
           </select>
         </div>
 
@@ -409,14 +537,15 @@
             <table id="dest-table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Budget (VND)</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th>Budget Source</th>
-                  <th class="text-center">Trip Plan</th>
-                  <th class="text-right">Actions</th>
+                  <th>Tên điểm đến</th>
+                  <th>Nhóm</th>
+                  <th>Ngân sách dự kiến</th>
+                  <th>Đã chi</th>
+                  <th>Độ ưu tiên</th>
+                  <th>Trạng thái</th>
+                  <th>Nguồn tiền</th>
+                  <th class="text-center">Lịch trình</th>
+                  <th class="text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody id="dest-tbody"></tbody>
@@ -424,8 +553,8 @@
           </div>
           <div id="dest-empty" class="empty-state" style="display:none;">
             <span style="font-size:40px">🗺️</span>
-            <p>No destinations found</p>
-            <small>Try adjusting your filters or add a new destination ✨</small>
+            <p>Không tìm thấy điểm đến</p>
+            <small>Hãy đổi bộ lọc hoặc thêm một điểm đến mới ✨</small>
           </div>
         </div>
       </div>
@@ -434,11 +563,11 @@
       <div id="view-budgets" class="view" style="display:none;">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Budgets 💰</h1>
-            <p class="page-subtitle">Manage your funding sources and track allocations 🌸</p>
+            <h1 class="page-title">Ngân sách 💰</h1>
+            <p class="page-subtitle">Quản lý các nguồn tiền và theo dõi kế hoạch chi tiêu 🌸</p>
           </div>
           <button class="btn-primary" onclick="openBudgetModal()">
-            <i class="fas fa-plus"></i> Add Source
+            <i class="fas fa-plus"></i> Thêm nguồn tiền
           </button>
         </div>
 
@@ -446,18 +575,18 @@
 
         <div class="table-card" style="margin-top:24px;">
           <div class="cute-card-header" style="padding:18px 22px;border-bottom:1.5px solid var(--border);">
-            <h3 class="cute-card-title">📋 All Sources</h3>
+            <h3 class="cute-card-title">📋 Tất cả nguồn tiền</h3>
           </div>
           <div class="table-scroll">
             <table id="budget-table">
               <thead>
                 <tr>
-                  <th>Source Name</th>
-                  <th class="text-right">Initial Amount</th>
-                  <th class="text-right">Allocated</th>
-                  <th class="text-right">Remaining</th>
-                  <th class="text-center">Destinations</th>
-                  <th class="text-right">Actions</th>
+                  <th>Tên nguồn</th>
+                  <th class="text-right">Số tiền ban đầu</th>
+                  <th class="text-right">Đã phân bổ</th>
+                  <th class="text-right">Còn lại</th>
+                  <th class="text-center">Điểm đến</th>
+                  <th class="text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody id="budget-tbody"></tbody>
@@ -465,63 +594,63 @@
           </div>
           <div id="budget-empty" class="empty-state" style="display:none;">
             <span style="font-size:40px">💸</span>
-            <p>No budget sources defined</p>
-            <small>Add a budget source to get started 🌸</small>
+            <p>Chưa có nguồn ngân sách</p>
+            <small>Thêm một nguồn tiền để bắt đầu 🌸</small>
           </div>
         </div>
       </div>
 
       <div id="view-group-fund" class="view" style="display:none;">
         <div class="page-header">
-          <div><h1 class="page-title">Group Fund 🤝</h1><p class="page-subtitle">Create or join a shared travel fund 🌸</p></div>
+          <div><h1 class="page-title">Quỹ nhóm 🤝</h1><p class="page-subtitle">Tạo hoặc tham gia quỹ du lịch chung 🌸</p></div>
         </div>
         <div class="group-fund-grid">
           <section class="cute-card group-fund-form-body">
-            <h3>✨ Create a shared fund</h3>
+            <h3>✨ Tạo quỹ chung</h3>
             <form onsubmit="createSharedFund(event)">
-              <input id="new-group-name" class="cute-input" placeholder="Fund name, e.g. Da Lat Trip 2026" required>
-              <input type="number" id="new-group-goal" class="cute-input" min="0" placeholder="Target amount" required>
-              <button class="btn-primary" type="submit">Create Fund</button>
+              <input id="new-group-name" class="cute-input" placeholder="Tên quỹ, ví dụ: Du lịch Đà Lạt 2026" required>
+              <input type="number" id="new-group-goal" class="cute-input" min="0" placeholder="Số tiền mục tiêu" required>
+              <button class="btn-primary" type="submit">Tạo quỹ</button>
             </form>
           </section>
           <section class="cute-card group-fund-form-body">
-            <h3>🔗 Join an existing fund</h3>
+            <h3>🔗 Tham gia quỹ có sẵn</h3>
             <form onsubmit="joinSharedFund(event)">
-              <input id="join-group-code" class="cute-input" placeholder="Enter invite code, e.g. DALAT26" required>
-              <button class="btn-primary" type="submit">Join Fund</button>
+              <input id="join-group-code" class="cute-input" placeholder="Nhập mã mời, ví dụ: DALAT26" required>
+              <button class="btn-primary" type="submit">Tham gia quỹ</button>
             </form>
           </section>
         </div>
         <section class="cute-card">
-          <div class="cute-card-header"><h3 class="cute-card-title">📂 My shared funds</h3></div>
+          <div class="cute-card-header"><h3 class="cute-card-title">📂 Quỹ chung của tôi</h3></div>
           <div id="shared-fund-list" class="group-fund-list"></div>
         </section>
         <section id="shared-fund-detail" class="cute-card" style="display:none;">
           <div class="cute-card-header">
-            <div><h3 class="cute-card-title" id="shared-fund-name">Shared Fund</h3><p id="shared-fund-code" style="color:var(--text-muted);font-size:13px;"></p></div>
-            <span class="pill pill--pink" id="shared-fund-members">0 members</span>
+             <div><h3 class="cute-card-title" id="shared-fund-name">Quỹ chung</h3><p id="shared-fund-code" style="color:var(--text-muted);font-size:13px;"></p></div>
+             <div class="group-fund-header-actions"><span class="pill pill--pink" id="shared-fund-members">0 thành viên</span><span id="shared-fund-actions"></span></div>
           </div>
           <div class="group-fund-summary">
             <h2 id="shared-fund-total">0 ₫</h2>
-            <p id="shared-fund-progress-label">0% of your goal</p>
+             <p id="shared-fund-progress-label">0% mục tiêu</p>
             <div class="group-fund-progress-track"><div id="shared-fund-progress" class="group-fund-progress-fill"></div></div>
-            <p>Goal: <strong id="shared-fund-goal">0 ₫</strong></p>
+             <p>Mục tiêu: <strong id="shared-fund-goal">0 ₫</strong></p>
           </div>
           <div class="group-fund-grid">
             <section class="group-fund-form-body">
-              <h3>💸 Add your contribution</h3>
+               <h3>💸 Thêm khoản đóng góp</h3>
               <form onsubmit="addSharedContribution(event)">
-                <input type="number" id="shared-contribution-amount" class="cute-input" min="1" placeholder="Amount" required>
-                <input id="shared-contribution-note" class="cute-input" placeholder="Note">
-                <button class="btn-primary" type="submit">Add Contribution</button>
+                 <input type="number" id="shared-contribution-amount" class="cute-input" min="1" placeholder="Số tiền" required>
+                 <input id="shared-contribution-note" class="cute-input" placeholder="Ghi chú">
+                 <button class="btn-primary" type="submit">Thêm đóng góp</button>
               </form>
             </section>
             <section class="group-fund-form-body">
-              <h3>👥 Members</h3>
+               <h3>👥 Thành viên</h3>
               <div id="shared-fund-member-list"></div>
             </section>
           </div>
-          <div class="cute-card-header" style="padding-left:0;padding-right:0;"><h3 class="cute-card-title">📋 Contribution History</h3></div>
+           <div class="cute-card-header" style="padding-left:0;padding-right:0;"><h3 class="cute-card-title">📋 Lịch sử đóng góp</h3></div>
           <div id="shared-fund-contribution-list"></div>
         </section>
       </div>
@@ -530,33 +659,33 @@
       <div id="view-settings" class="view" style="display:none;">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Settings ⚙️</h1>
-            <p class="page-subtitle">Manage your account and preferences 🌸</p>
+            <h1 class="page-title">Cài đặt ⚙️</h1>
+            <p class="page-subtitle">Quản lý tài khoản và tùy chọn của bạn 🌸</p>
           </div>
         </div>
 
         <div class="settings-grid">
           <div class="cute-card">
             <div class="cute-card-header">
-              <h3 class="cute-card-title">👤 Profile Information</h3>
+              <h3 class="cute-card-title">👤 Thông tin cá nhân</h3>
             </div>
             <div style="padding:22px;">
               <div class="profile-top">
                 <div class="profile-avatar-big" id="settings-avatar">ST</div>
                 <div>
-                  <h4 id="settings-display-name" style="font-size:18px;font-weight:700;margin-bottom:4px;color:var(--text);">Student Traveler</h4>
-                  <p style="color:var(--text-muted);font-size:13px;">✈️ Travel Planner</p>
+                  <h4 id="settings-display-name" style="font-size:18px;font-weight:700;margin-bottom:4px;color:var(--text);">Bạn</h4>
+                  <p style="color:var(--text-muted);font-size:13px;">✈️ Người lập kế hoạch</p>
                 </div>
               </div>
               <form id="profile-form" onsubmit="saveProfile(event)" novalidate>
                 <div class="form-row">
                   <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="settings-username" class="cute-input" placeholder="Username">
+                    <label>Tên đăng nhập</label>
+                    <input type="text" id="settings-username" class="cute-input" placeholder="Tên đăng nhập">
                   </div>
                   <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="settings-fullname" class="cute-input" placeholder="Your full name">
+                    <label>Họ và tên</label>
+                    <input type="text" id="settings-fullname" class="cute-input" placeholder="Nhập họ và tên">
                   </div>
                 </div>
                 <div class="form-row">
@@ -565,16 +694,16 @@
                     <input type="email" id="settings-email" class="cute-input" placeholder="email@example.com">
                   </div>
                   <div class="form-group">
-                    <label>Phone</label>
+                    <label>Số điện thoại</label>
                     <input type="tel" id="settings-phone" class="cute-input" placeholder="0123456789">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label>New Password <span style="color:var(--text-muted);font-weight:400;">(leave blank to keep current)</span></label>
-                  <input type="password" id="settings-password" class="cute-input" placeholder="Min. 6 characters">
+                  <label>Mật khẩu mới <span style="color:var(--text-muted);font-weight:400;">(để trống nếu không đổi)</span></label>
+                  <input type="password" id="settings-password" class="cute-input" placeholder="Tối thiểu 6 ký tự">
                 </div>
                 <button type="submit" class="btn-primary">
-                  <i class="fas fa-save"></i> Save Changes
+                  <i class="fas fa-save"></i> Lưu thay đổi
                 </button>
               </form>
             </div>
@@ -582,26 +711,41 @@
 
           <div class="cute-card danger-card">
             <div class="cute-card-header">
-              <h3 class="cute-card-title" style="color:var(--danger);">⚠️ Danger Zone</h3>
+              <h3 class="cute-card-title" style="color:var(--danger);">⚠️ Khu vực nguy hiểm</h3>
             </div>
             <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
               <div class="danger-item">
                 <div>
-                  <h4 style="font-weight:600;margin-bottom:4px;color:var(--text);font-size:14px;">Reset Demo Data</h4>
-                  <p style="color:var(--text-muted);font-size:13px;">Delete all current data and restore the original demo dataset.</p>
+                  <h4 style="font-weight:600;margin-bottom:4px;color:var(--text);font-size:14px;">Đặt lại dữ liệu mẫu</h4>
+                  <p style="color:var(--text-muted);font-size:13px;">Xóa dữ liệu hiện tại và khôi phục bộ dữ liệu mẫu ban đầu.</p>
                 </div>
                 <button class="btn-danger" onclick="confirmReset()">
-                  <i class="fas fa-undo"></i> Reset
+                   <i class="fas fa-undo"></i> Đặt lại
                 </button>
               </div>
               <div class="danger-item">
                 <div>
-                  <h4 style="font-weight:600;margin-bottom:4px;color:var(--text);font-size:14px;">Delete My Account</h4>
-                  <p style="color:var(--text-muted);font-size:13px;">Permanently delete your account and all associated data.</p>
+                  <h4 style="font-weight:600;margin-bottom:4px;color:var(--text);font-size:14px;">Xóa tài khoản</h4>
+                  <p style="color:var(--text-muted);font-size:13px;">Xóa vĩnh viễn tài khoản và toàn bộ dữ liệu liên quan.</p>
                 </div>
                 <button class="btn-danger" onclick="confirmDeleteAccount()">
-                  <i class="fas fa-trash"></i> Delete
+                   <i class="fas fa-trash"></i> Xóa
                 </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cute-card" style="grid-column: 1 / -1;">
+            <div class="cute-card-header">
+              <h3 class="cute-card-title">📤 Dữ liệu &amp; báo cáo</h3>
+            </div>
+            <div class="export-panel">
+              <p class="export-desc">Xuất dữ liệu du lịch bất cứ lúc nào hoặc in báo cáo ngân sách gọn gàng cho buổi thuyết trình 🌸</p>
+              <div class="export-btn-row">
+                <button class="btn-ghost" onclick="exportDestinationsCSV()"><i class="fas fa-file-csv"></i> Xuất điểm đến (CSV)</button>
+                <button class="btn-ghost" onclick="exportBudgetsCSV()"><i class="fas fa-file-csv"></i> Xuất ngân sách (CSV)</button>
+                <button class="btn-ghost" onclick="exportExpensesCSV()"><i class="fas fa-file-csv"></i> Xuất khoản chi (CSV)</button>
+                <button class="btn-primary" onclick="printBudgetReport()"><i class="fas fa-print"></i> In báo cáo ngân sách</button>
               </div>
             </div>
           </div>
@@ -611,68 +755,71 @@
     </main>
   </div>
 
+  <!-- Confetti layer for celebratory moments -->
+  <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
+
   <!-- MODALS -->
 
   <!-- Destination Modal -->
   <div id="dest-modal" class="modal-overlay" style="display:none;" onclick="closeModalBackdrop(event,'dest-modal')">
     <div class="modal-box">
       <div class="modal-header">
-        <h3 id="dest-modal-title">📍 Add Destination</h3>
+        <h3 id="dest-modal-title">📍 Thêm điểm đến</h3>
         <button class="modal-close-btn" onclick="closeModal('dest-modal')"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <form id="dest-form" onsubmit="saveDestination(event)" novalidate>
           <input type="hidden" id="dest-edit-id">
           <div class="form-group">
-            <label>Destination Name <span class="required">*</span></label>
-            <input type="text" id="dest-name" class="cute-input" placeholder="e.g. Da Lat Highlands">
+            <label>Tên điểm đến <span class="required">*</span></label>
+            <input type="text" id="dest-name" class="cute-input" placeholder="Ví dụ: Cao nguyên Đà Lạt">
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Category <span class="required">*</span></label>
-              <input type="text" id="dest-category" class="cute-input" placeholder="e.g. Mountain, Beach">
+              <label>Nhóm điểm đến <span class="required">*</span></label>
+              <input type="text" id="dest-category" class="cute-input" placeholder="Ví dụ: Núi, Biển">
             </div>
             <div class="form-group">
-              <label>Budget (VND) <span class="required">*</span></label>
-              <input type="number" id="dest-budget" class="cute-input" placeholder="e.g. 2500000" min="0">
+              <label>Ngân sách (VNĐ) <span class="required">*</span></label>
+              <input type="number" id="dest-budget" class="cute-input" placeholder="Ví dụ: 2500000" min="0">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Priority <span class="required">*</span></label>
+              <label>Độ ưu tiên <span class="required">*</span></label>
               <select id="dest-priority" class="cute-input">
-                <option value="1">1 — Very Low</option>
-                <option value="2">2 — Low</option>
-                <option value="3" selected>3 — Medium</option>
-                <option value="4">4 — High</option>
-                <option value="5">5 — Very High ⭐</option>
+                <option value="1">1 — Rất thấp</option>
+                <option value="2">2 — Thấp</option>
+                <option value="3" selected>3 — Trung bình</option>
+                <option value="4">4 — Cao</option>
+                <option value="5">5 — Rất cao ⭐</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Status <span class="required">*</span></label>
+              <label>Trạng thái <span class="required">*</span></label>
               <select id="dest-status" class="cute-input">
-                <option value="0">Planned</option>
-                <option value="1">Visited</option>
+                <option value="0">Đang lên kế hoạch</option>
+                <option value="1">Đã ghé thăm</option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Start Date</label>
+              <label>Ngày bắt đầu</label>
               <input type="date" id="dest-start-date" class="cute-input">
             </div>
             <div class="form-group">
-              <label>End Date</label>
+              <label>Ngày kết thúc</label>
               <input type="date" id="dest-end-date" class="cute-input">
             </div>
           </div>
           <div class="form-group">
-            <label>Budget Source <span class="required">*</span></label>
+            <label>Nguồn tiền <span class="required">*</span></label>
             <select id="dest-source" class="cute-input"></select>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn-ghost" onclick="closeModal('dest-modal')">Cancel</button>
-            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save</button>
+            <button type="button" class="btn-ghost" onclick="closeModal('dest-modal')">Hủy</button>
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Lưu</button>
           </div>
         </form>
       </div>
@@ -683,23 +830,23 @@
   <div id="budget-modal" class="modal-overlay" style="display:none;" onclick="closeModalBackdrop(event,'budget-modal')">
     <div class="modal-box">
       <div class="modal-header">
-        <h3 id="budget-modal-title">💰 Add Budget Source</h3>
+        <h3 id="budget-modal-title">💰 Thêm nguồn tiền</h3>
         <button class="modal-close-btn" onclick="closeModal('budget-modal')"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <form id="budget-form" onsubmit="saveBudgetSource(event)" novalidate>
           <input type="hidden" id="budget-edit-id">
           <div class="form-group">
-            <label>Source Name <span class="required">*</span></label>
-            <input type="text" id="budget-source-name" class="cute-input" placeholder="e.g. Savings Account">
+            <label>Tên nguồn tiền <span class="required">*</span></label>
+            <input type="text" id="budget-source-name" class="cute-input" placeholder="Ví dụ: Tiền tiết kiệm">
           </div>
           <div class="form-group">
-            <label>Initial Amount (VND) <span class="required">*</span></label>
-            <input type="number" id="budget-source-amount" class="cute-input" placeholder="e.g. 5000000" min="0">
+            <label>Số tiền ban đầu (VNĐ) <span class="required">*</span></label>
+            <input type="number" id="budget-source-amount" class="cute-input" placeholder="Ví dụ: 5000000" min="0">
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn-ghost" onclick="closeModal('budget-modal')">Cancel</button>
-            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save</button>
+            <button type="button" class="btn-ghost" onclick="closeModal('budget-modal')">Hủy</button>
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Lưu</button>
           </div>
         </form>
       </div>
@@ -710,17 +857,17 @@
   <div id="confirm-modal" class="modal-overlay" style="display:none;">
     <div class="modal-box modal-box--sm">
       <div class="modal-header">
-        <h3 id="confirm-modal-title">Confirm Action</h3>
+        <h3 id="confirm-modal-title">Xác nhận thao tác</h3>
         <button class="modal-close-btn" onclick="closeModal('confirm-modal')"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <div class="confirm-body">
           <div class="confirm-icon">⚠️</div>
-          <p id="confirm-modal-message">Are you sure? This action cannot be undone.</p>
+          <p id="confirm-modal-message">Bạn chắc chắn muốn thực hiện thao tác này? Hành động này không thể hoàn tác.</p>
         </div>
         <div class="modal-footer">
-          <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
-          <button class="btn-danger" id="confirm-action-btn">Confirm</button>
+          <button class="btn-ghost" onclick="closeModal('confirm-modal')">Hủy</button>
+          <button class="btn-danger" id="confirm-action-btn">Xác nhận</button>
         </div>
       </div>
     </div>
@@ -730,5 +877,8 @@
   <div id="toast-container"></div>
 
   <script src="/script.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
 </body>
 </html>

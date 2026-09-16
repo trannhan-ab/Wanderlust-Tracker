@@ -6,10 +6,12 @@
       {
         "id": 1,
         "day": 1,
-        "time": "08:00",
-        "activity": "đi mua sắm",
+        "time": "19:00",
+        "activity": "đi chợ đêm",
         "location": "chợ đêm đà lạt",
-        "note": "mang ví, máy ảnh"
+        "note": "mang ví, máy ảnh",
+        "completed": true,
+        "sort_order": 0
       }
     ],
     "general_note": ""

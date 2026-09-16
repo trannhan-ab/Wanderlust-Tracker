@@ -1,0 +1,32 @@
+[
+  {
+    "expense_id": 1,
+    "dest_id": 1,
+    "user_id": 1,
+    "amount": 850000,
+    "category": "Transport",
+    "note": "Coach ticket and local rides",
+    "spent_on": "2026-08-02",
+    "created_at": "2026-08-02T09:00:00.000Z"
+  },
+  {
+    "expense_id": 2,
+    "dest_id": 3,
+    "user_id": 1,
+    "amount": 620000,
+    "category": "Food",
+    "note": "Dinner and coffee",
+    "spent_on": "2026-08-05",
+    "created_at": "2026-08-05T12:00:00.000Z"
+  },
+  {
+    "expense_id": 3,
+    "dest_id": 2,
+    "user_id": 1,
+    "amount": 450000,
+    "category": "Booking",
+    "note": "Homestay deposit",
+    "spent_on": "2026-09-12",
+    "created_at": "2026-09-12T08:30:00.000Z"
+  }
+]
