@@ -453,7 +453,7 @@ function renderAchievements() {
     </div>
     <div class="achievement-chip"><span>🗺️</span><div><strong>${totalDests}</strong><small>Điểm đến</small></div></div>
     <div class="achievement-chip"><span>🚩</span><div><strong>${visited}</strong><small>Đã khám phá</small></div></div>
-    <div class="achievement-chip"><span>💎</span><div><strong>${savedPercent}%</strong><small>Ngân sách còn lại</small></div></div>
+    <div class="achievement-chip"><span>💰</span><div><strong>${savedPercent}%</strong><small>Ngân sách còn lại</small></div></div>
   `;
 }
 
