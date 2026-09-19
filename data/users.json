@@ -38,5 +38,13 @@
     "email": "abcdf@gmail.con",
     "phone": "0987654321",
     "password": "123456"
+  },
+  {
+    "user_id": 6,
+    "fullname": "nguyễn văn A",
+    "username": "nguyễnvăna6",
+    "email": "nguyenvana123@gmail.com",
+    "phone": "0987654321",
+    "password": "scrypt$fa1b2606e6e404c9d4e5d479379646a2$1b07e4e59fac24549654c9f8aa2496714c159a06159f7506f65e600c3426ce647bbc9ab4c09c5ea05a320ffec3e32a28eed15d7bfa29dd83862fb5654551f1a9"
   }
 ]

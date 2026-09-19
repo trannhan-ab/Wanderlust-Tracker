@@ -2,6 +2,7 @@
 "use strict";
 
 const CHART_COLORS = ["#e2628a", "#2db87b", "#f59e0b", "#a78bfa", "#f43f5e", "#38bdf8", "#fb923c"];
+const USERNAME_PATTERN = /^[A-Za-z0-9]{3,30}$/;
 const CAT_EMOJI = {
   mountain: "🏔️", beach: "🏖️", culture: "🏛️", adventure: "🧗",
   city: "🌆", food: "🍜", nature: "🌿", history: "🏯",
@@ -283,7 +284,7 @@ async function handleLogin(event) {
     await loadServerData();
     enterApp(result.user);
   } catch (error) {
-    showAuthError("login-error", `${error.message} Try: demo / 123456789`);
+    showAuthError("login-error", `${error.message} Gợi ý tài khoản mẫu: demo / 123456789`);
   } finally {
     setFormBusy("login-form", false);
   }
@@ -293,11 +294,15 @@ async function handleRegister(event) {
   event.preventDefault();
   hideAuthError("register-error");
   const fullname = el("reg-fullname").value.trim();
+  const username = el("reg-username").value.trim().toLowerCase();
   const email = el("reg-email").value.trim();
   const phone = el("reg-phone").value.trim();
   const password = el("reg-password").value;
   const confirm = el("reg-confirm").value;
-  if (!fullname || !email || !phone || !password || !confirm) return showAuthError("register-error", "Vui lòng điền đầy đủ thông tin.");
+  if (!fullname || !username || !email || !phone || !password || !confirm) return showAuthError("register-error", "Vui lòng điền đầy đủ thông tin.");
+  if (!USERNAME_PATTERN.test(username)) {
+    return showAuthError("register-error", "Tên đăng nhập phải dài 3–30 ký tự, chỉ gồm chữ không dấu và số, không có khoảng trắng.");
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAuthError("register-error", "Vui lòng nhập địa chỉ email hợp lệ.");
   if (password.length < 6) return showAuthError("register-error", "Mật khẩu phải có ít nhất 6 ký tự.");
   if (password !== confirm) return showAuthError("register-error", "Mật khẩu xác nhận không khớp.");
@@ -305,7 +310,7 @@ async function handleRegister(event) {
   setFormBusy("register-form", true, "Đang tạo tài khoản…");
   try {
     const result = await apiRequest("/auth/register", {
-      method: "POST", skipCsrf: true, body: JSON.stringify({ fullname, email, phone, password }),
+      method: "POST", skipCsrf: true, body: JSON.stringify({ username, fullname, email, phone, password }),
     });
     state.currentUser = result.user;
     state.users = [result.user];
@@ -809,9 +814,7 @@ async function geocodeDestination(destination) {
   const known = knownMapCoords(destination.name);
   if (known) return known;
   try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=vi&countrycodes=vn&q=${encodeURIComponent(`${destination.name}, Việt Nam`)}`
-    );
+    const response = await fetch(`/map/geocode?q=${encodeURIComponent(`${destination.name}, Việt Nam`)}`);
     if (!response.ok) return null;
     const results = await response.json();
     const lat = Number(results[0]?.lat);
@@ -950,24 +953,61 @@ function fitAllDestinations() {
 async function searchMapPlace() {
   const input = el("map-search-input");
   const query = input?.value.trim();
-   if (!query || !state.map) return showToast("Hãy nhập một địa điểm để tìm kiếm.", "info");
-   setText("map-status", "Đang tìm địa điểm…");
+  if (!query) return showToast("Hãy nhập một địa điểm để tìm kiếm.", "info");
+  if (!state.map) renderMap();
+  if (!state.map) return showToast("Bản đồ chưa sẵn sàng. Hãy kiểm tra kết nối Internet.", "error");
+
+  const matchingDestination = userDestinations().find((destination) =>
+    normalizePlaceName(destination.name).includes(normalizePlaceName(query)) ||
+    normalizePlaceName(query).includes(normalizePlaceName(destination.name)));
+  if (matchingDestination) {
+    let destinationCoords = coordsForDestination(matchingDestination);
+    if (!destinationCoords) destinationCoords = await ensureDestinationCoords(matchingDestination);
+    if (destinationCoords) {
+      renderMapDestinationList();
+      renderMapMarkers();
+      state.map.flyTo(destinationCoords, 12, { duration: 0.8 });
+      const marker = state.mapMarkers.find((item) => item.options.title === matchingDestination.name);
+      if (marker) marker.openPopup();
+      setText("map-status", `Đã tìm thấy "${matchingDestination.name}"`);
+      return;
+    }
+  }
+
+  const known = knownMapCoords(query);
+  if (known) {
+    state.map.flyTo(known, 12, { duration: 0.8 });
+    state.mapSearchMarker?.remove();
+    state.mapSearchMarker = L.marker(known, { icon: mapMarkerIcon(false) }).addTo(state.map)
+      .bindPopup(`<div class="map-popup"><span class="map-popup-kicker">KẾT QUẢ TÌM KIẾM</span><strong>${escHtml(query)}</strong><small>Vị trí đã nhận diện trong Việt Nam</small></div>`)
+      .openPopup();
+    state.lastMapSearch = { name: query, lat: known[0], lng: known[1] };
+    setText("map-status", "Đã tìm thấy địa điểm");
+    return;
+  }
+
+  setText("map-status", "Đang tìm địa điểm…");
   try {
-     const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=vi&countrycodes=vn&q=${encodeURIComponent(query)}`);
+    const response = await fetch(`/map/geocode?q=${encodeURIComponent(query)}`);
+    if (!response.ok) throw new Error("Geocoding request failed");
     const results = await response.json();
-     if (!results[0]) return showToast("Không tìm thấy địa điểm này.", "info");
+    if (!results[0]) {
+      setText("map-status", "Không tìm thấy địa điểm");
+      return showToast("Không tìm thấy địa điểm này.", "info");
+    }
     const place = results[0];
     const point = [Number(place.lat), Number(place.lon)];
+    if (!point.every(Number.isFinite)) throw new Error("Invalid map coordinates");
     state.map.flyTo(point, 12, { duration: 0.8 });
     state.mapSearchMarker?.remove();
     state.mapSearchMarker = L.marker(point, { icon: mapMarkerIcon(false) }).addTo(state.map)
        .bindPopup(`<div class="map-popup"><span class="map-popup-kicker">KẾT QUẢ TÌM KIẾM</span><strong>${escHtml(place.display_name.split(",")[0])}</strong><small>${escHtml(place.display_name)}</small><button class="btn-primary btn-small" onclick="addSearchResultToWishlist()">♡ Lưu vào danh sách</button><a class="map-popup-link" href="${fullMapUrl(point)}" target="_blank" rel="noopener noreferrer">Mở bản đồ đầy đủ ↗</a></div>`)
       .openPopup();
     state.lastMapSearch = { name: place.display_name.split(",")[0], lat: point[0], lng: point[1] };
-     setText("map-status", "Đã tìm thấy địa điểm");
+    setText("map-status", "Đã tìm thấy địa điểm");
   } catch (_) {
-     showToast("Dịch vụ bản đồ đang tạm thời không khả dụng.", "error");
-     setText("map-status", "Bản đồ sẵn sàng");
+    showToast("Dịch vụ tìm kiếm bản đồ đang tạm thời không khả dụng.", "error");
+    setText("map-status", "Bản đồ sẵn sàng");
   }
 }
 function addSearchResultToWishlist() {
@@ -1295,9 +1335,12 @@ async function saveProfile(event) {
   event.preventDefault();
   const user = getCurrentUser();
   if (!user) return;
-  const username = el("settings-username").value.trim(), fullname = el("settings-fullname").value.trim();
+  const username = el("settings-username").value.trim().toLowerCase(), fullname = el("settings-fullname").value.trim();
   const email = el("settings-email").value.trim(), phone = el("settings-phone").value.trim(), password = el("settings-password").value;
   if (!username || !fullname) return showToast("Tên đăng nhập và họ tên là bắt buộc.", "error");
+  if (!USERNAME_PATTERN.test(username)) {
+    return showToast("Tên đăng nhập phải dài 3–30 ký tự, chỉ gồm chữ không dấu và số, không có khoảng trắng.", "error");
+  }
   if (password && password.length < 6) return showToast("Mật khẩu phải có ít nhất 6 ký tự.", "error");
   try {
     const result = await apiRequest("/users/me", { method: "PUT", body: JSON.stringify({ username, fullname, email, phone, ...(password ? { password } : {}) }) });

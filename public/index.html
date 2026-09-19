@@ -76,8 +76,17 @@
             <label for="reg-fullname">Họ và tên</label>
             <div class="input-wrapper">
               <i class="fas fa-id-card input-icon"></i>
-              <input type="text" id="reg-fullname" placeholder="Nhập họ và tên">
+              <input type="text" id="reg-fullname" placeholder="Nhập họ và tên" autocomplete="name">
             </div>
+          </div>
+          <div class="form-group">
+            <label for="reg-username">Tên đăng nhập</label>
+            <div class="input-wrapper">
+              <i class="fas fa-at input-icon"></i>
+              <input type="text" id="reg-username" placeholder="Ví dụ: nguyenvana" autocomplete="username"
+                minlength="3" maxlength="30" pattern="[A-Za-z0-9]+" required>
+            </div>
+            <small class="field-help">Tự đặt tên từ 3–30 ký tự, chỉ dùng chữ không dấu và số, không có khoảng trắng.</small>
           </div>
           <div class="form-row">
             <div class="form-group">

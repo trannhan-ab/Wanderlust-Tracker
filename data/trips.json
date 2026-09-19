@@ -6,11 +6,55 @@
       {
         "id": 1,
         "day": 1,
-        "time": "19:00",
-        "activity": "đi chợ đêm",
-        "location": "chợ đêm đà lạt",
-        "note": "mang ví, máy ảnh",
+        "time": "13:00",
+        "activity": "Checkin khách sạn",
+        "location": "Holiday Ha Long",
+        "note": "mang máy ảnh, mũ",
         "completed": true,
+        "sort_order": 0
+      },
+      {
+        "id": 2,
+        "day": 2,
+        "time": "20:00",
+        "activity": "Đi ăn vặt",
+        "location": "Bờ biển",
+        "note": "mang tiền mặt",
+        "completed": true,
+        "sort_order": 1
+      }
+    ],
+    "general_note": ""
+  },
+  {
+    "dest_id": 2,
+    "user_id": 1,
+    "items": [
+      {
+        "id": 1,
+        "day": 1,
+        "time": "12:00",
+        "activity": "Đi ăn trưa",
+        "location": "Quán Mộc",
+        "note": "Mang ví, máy ảnh",
+        "completed": true,
+        "sort_order": 0
+      }
+    ],
+    "general_note": ""
+  },
+  {
+    "dest_id": 4,
+    "user_id": 1,
+    "items": [
+      {
+        "id": 1,
+        "day": 1,
+        "time": "08:00",
+        "activity": "Ăn sáng bún cá cay",
+        "location": "quán abc",
+        "note": "mang ví tiền",
+        "completed": false,
         "sort_order": 0
       }
     ],

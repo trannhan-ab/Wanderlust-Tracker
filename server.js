@@ -139,6 +139,12 @@ function stringValue(body, field, fallback = "") {
   return String(body[field]).trim();
 }
 
+const USERNAME_PATTERN = /^[A-Za-z0-9]{3,30}$/;
+
+function normalizeUsername(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 function numberValue(body, field, fallback = 0) {
   const value = Number(body?.[field]);
   return Number.isFinite(value) ? value : fallback;
@@ -253,7 +259,8 @@ function isPublicPath(req) {
     req.path === "/health" ||
     req.path === "/auth/login" ||
     req.path === "/auth/register" ||
-    req.path === "/auth/session";
+    req.path === "/auth/session" ||
+    req.path === "/map/geocode";
 }
 
 // Every API route except login, registration, session discovery, and health is protected.
@@ -268,6 +275,32 @@ app.use((req, res, next) => {
 app.get("/", (_req, res) => res.sendFile(path.join(PUBLIC_DIR, "index.html")));
 app.get("/health", (_req, res) => res.json({ ok: true, storage: "data" }));
 
+app.get("/map/geocode", async (req, res) => {
+  const query = String(req.query.q || "").trim();
+  if (!query) return sendError(res, 400, "A place name is required.");
+  if (query.length > 120) return sendError(res, 400, "The place name is too long.");
+  try {
+    const url = new URL("https://nominatim.openstreetmap.org/search");
+    url.searchParams.set("format", "jsonv2");
+    url.searchParams.set("limit", "5");
+    url.searchParams.set("accept-language", "vi");
+    url.searchParams.set("countrycodes", "vn");
+    url.searchParams.set("q", query);
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "WanderlustTracker/1.0 (travel planning app)",
+      },
+    });
+    if (!response.ok) return sendError(res, 502, "The map search service is unavailable.");
+    const results = await response.json();
+    return res.json(Array.isArray(results) ? results : []);
+  } catch (error) {
+    console.error("Map geocoding failed:", error.message);
+    return sendError(res, 502, "The map search service is unavailable.");
+  }
+});
+
 app.get("/auth/session", (req, res) => {
   const active = currentSession(req);
   if (!active) return sendError(res, 401, "No active session.");
@@ -278,9 +311,12 @@ app.get("/auth/session", (req, res) => {
 
 app.post("/auth/login", async (req, res) => {
   const identifier = stringValue(req.body, "usernameOrEmail");
+  const normalizedIdentifier = identifier.toLowerCase();
   const password = String(req.body?.password || "");
   const users = readJSON("users");
-  const index = users.findIndex((item) => item.username === identifier || item.email === identifier.toLowerCase());
+  const index = users.findIndex((item) =>
+    normalizeUsername(item.username) === normalizedIdentifier ||
+    String(item.email || "").toLowerCase() === normalizedIdentifier);
   const user = index >= 0 ? users[index] : null;
   if (!user || !(await verifyPassword(password, user.password))) {
     return sendError(res, 401, "Invalid username/email or password.");
@@ -295,26 +331,32 @@ app.post("/auth/login", async (req, res) => {
 
 app.post("/auth/register", async (req, res) => {
   const users = readJSON("users");
+  const username = normalizeUsername(req.body?.username);
   const fullname = stringValue(req.body, "fullname");
   const email = stringValue(req.body, "email").toLowerCase();
   const phone = stringValue(req.body, "phone");
   const password = String(req.body?.password || "");
-  if (!fullname || !email || !phone || !password) {
+  if (!username || !fullname || !email || !phone || !password) {
     return sendError(res, 400, "All registration fields are required.");
+  }
+  if (!USERNAME_PATTERN.test(username)) {
+    return sendError(res, 400, "Username must be 3-30 characters using only unaccented letters and numbers, without spaces.");
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return sendError(res, 400, "Please enter a valid email address.");
   }
   if (password.length < 6) return sendError(res, 400, "Password must be at least 6 characters.");
+  if (users.some((user) => normalizeUsername(user.username) === username)) {
+    return sendError(res, 409, "That username is already in use.");
+  }
   if (users.some((user) => String(user.email).toLowerCase() === email)) {
     return sendError(res, 409, "An account with this email already exists.");
   }
   const userId = nextId(users, "user_id");
-  const baseUsername = fullname.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "") || "traveler";
   const newUser = {
     user_id: userId,
     fullname,
-    username: `${baseUsername}${userId}`,
+    username,
     email,
     phone,
     password: await hashPassword(password),
@@ -401,16 +443,19 @@ app.put("/users/me", async (req, res) => {
   const users = readJSON("users");
   const index = users.findIndex((user) => Number(user.user_id) === Number(req.user.user_id));
   const current = users[index];
-  const username = stringValue(req.body, "username", current.username);
+  const username = normalizeUsername(stringValue(req.body, "username", current.username));
   const fullname = stringValue(req.body, "fullname", current.fullname);
   const email = stringValue(req.body, "email", current.email).toLowerCase();
   const phone = stringValue(req.body, "phone", current.phone);
   const password = req.body?.password ? String(req.body.password) : "";
   if (!username || !fullname || !email) return sendError(res, 400, "Username, name, and email are required.");
+  if (!USERNAME_PATTERN.test(username)) {
+    return sendError(res, 400, "Username must be 3-30 characters using only unaccented letters and numbers, without spaces.");
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return sendError(res, 400, "Please enter a valid email address.");
   if (password && password.length < 6) return sendError(res, 400, "Password must be at least 6 characters.");
   if (users.some((user) => user.user_id !== current.user_id &&
-      (user.username === username || String(user.email).toLowerCase() === email))) {
+      (normalizeUsername(user.username) === username || String(user.email).toLowerCase() === email))) {
     return sendError(res, 409, "That username or email is already in use.");
   }
   users[index] = {
