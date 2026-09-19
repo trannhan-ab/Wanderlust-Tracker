@@ -1,10 +1,10 @@
 
 "use strict";
 
-const CHART_COLORS = ["#e2628a", "#2db87b", "#f59e0b", "#a78bfa", "#f43f5e", "#38bdf8", "#fb923c"];
+const CHART_COLORS = ["#d95782", "#a78bfa", "#86cdb0", "#f1b7ca", "#f1c98f", "#8ec6df", "#cfb9ed"];
 const USERNAME_PATTERN = /^[A-Za-z0-9]{3,30}$/;
 const CAT_EMOJI = {
-  mountain: "🏔️", beach: "🏖️", culture: "🏛️", adventure: "🧗",
+  núi: "🏔️", biển: "🏖️", culture: "🏛️", adventure: "🧗",
   city: "🌆", food: "🍜", nature: "🌿", history: "🏯",
   island: "🏝️", forest: "🌲", lake: "🏞️", waterfall: "💧",
 };
@@ -465,7 +465,7 @@ function renderAchievements() {
 function celebrate() {
   const container = el("confetti-container");
   if (!container) return;
-  const colors = ["#e2628a", "#f4a7c8", "#a78bfa", "#2db87b", "#f59e0b", "#38bdf8"];
+  const colors = ["#d95782", "#f4a7c8", "#a78bfa", "#86cdb0", "#f1c98f", "#8ec6df"];
   for (let i = 0; i < 70; i++) {
     const piece = document.createElement("span");
     piece.className = "confetti-piece";
