@@ -4,7 +4,7 @@
 const CHART_COLORS = ["#d95782", "#a78bfa", "#86cdb0", "#f1b7ca", "#f1c98f", "#8ec6df", "#cfb9ed"];
 const USERNAME_PATTERN = /^[A-Za-z0-9]{3,30}$/;
 const CAT_EMOJI = {
-  núi: "🏔️", biển: "🏖️", culture: "🏛️", adventure: "🧗",
+  mountain: "🏔️", beach: "🏖️", culture: "🏛️", adventure: "🧗",
   city: "🌆", food: "🍜", nature: "🌿", history: "🏯",
   island: "🏝️", forest: "🌲", lake: "🏞️", waterfall: "💧",
 };

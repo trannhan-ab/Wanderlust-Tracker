@@ -1759,3 +1759,63 @@ input:focus, select:focus, textarea:focus, .cute-input:focus { border-color: var
   border-color: rgba(86,173,140,.24);
 }
 .map-dot--visited, .wanderlust-marker--visited { background: #56ad8c; }
+
+/* ── BRIGHT AUTH SCREEN ────────────────────────────────────── */
+#auth-section {
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 13% 14%, rgba(255,255,255,.92) 0 5rem, transparent 18rem),
+    radial-gradient(circle at 88% 86%, rgba(255,224,239,.58), transparent 24rem),
+    linear-gradient(135deg, #fffafb 0%, #fff3f8 46%, #f8f3ff 100%);
+}
+#auth-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: .34;
+  background-image: radial-gradient(rgba(217,87,130,.18) 1px, transparent 1px);
+  background-size: 23px 23px;
+  mask-image: linear-gradient(135deg, rgba(0,0,0,.78), transparent 58%);
+  pointer-events: none;
+}
+#auth-section::after {
+  border-color: rgba(217,87,130,.10);
+  box-shadow:
+    0 0 0 34px rgba(217,87,130,.025),
+    0 0 0 76px rgba(167,139,250,.022),
+    0 0 0 126px rgba(255,255,255,.22);
+}
+.auth-bg { opacity: 1; }
+.auth-bubble {
+  border: 1px solid rgba(255,255,255,.48);
+  box-shadow: inset 10px 10px 24px rgba(255,255,255,.24), 0 18px 44px rgba(217,87,130,.08);
+  filter: blur(.2px);
+}
+.auth-bubble--1 {
+  background: radial-gradient(circle at 36% 32%, rgba(255,194,221,.52), rgba(245,145,190,.10) 64%, transparent 72%);
+}
+.auth-bubble--2 {
+  background: radial-gradient(circle at 38% 30%, rgba(224,204,255,.54), rgba(182,151,238,.10) 65%, transparent 74%);
+}
+.auth-bubble--3 {
+  background: radial-gradient(circle at 35% 30%, rgba(255,219,233,.48), rgba(247,170,202,.08) 66%, transparent 74%);
+}
+.auth-bubble--4 {
+  background: radial-gradient(circle at 35% 30%, rgba(255,231,242,.52), rgba(245,180,212,.08) 66%, transparent 74%);
+}
+.auth-card {
+  background: #fff;
+  border: 1px solid rgba(217,87,130,.12);
+  border-radius: 30px;
+  box-shadow: 0 24px 64px rgba(177,74,116,.13), 0 2px 8px rgba(177,74,116,.04);
+}
+.auth-card::before {
+  content: "";
+  display: block;
+  width: 42px;
+  height: 4px;
+  margin: -2px auto 20px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #f4a7c8, #d8c2fa);
+}
