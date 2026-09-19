@@ -404,14 +404,14 @@ function renderGreetingBanner() {
   const user = getCurrentUser();
   const hour = new Date().getHours();
   let hello, emoji;
-  if (hour < 5) { hello = "Thức khuya vậy, đi ngủ sớm nhé"; emoji = "🌙"; }
+  if (hour < 5) { hello = "Khuya rồi, đi ngủ sớm nhé"; emoji = "🌙"; }
   else if (hour < 11) { hello = "Chào buổi sáng"; emoji = "☀️"; }
   else if (hour < 13) { hello = "Chào buổi trưa"; emoji = "🌤️"; }
   else if (hour < 18) { hello = "Chào buổi chiều"; emoji = "🌇"; }
   else { hello = "Chào buổi tối"; emoji = "🌙"; }
   const name = user?.fullname || user?.username || "bạn";
   setText("greeting-hello", hello);
-  setText("greeting-name", `${hello}, ${name}! ${emoji}`);
+  setText("greeting-name", `${name}! ${emoji}`);
   setText("greeting-quote", "");
   setText("greeting-emoji", emoji === "🌙" ? "🌙" : emoji === "☀️" ? "🌸" : "🌤️");
 }
@@ -428,7 +428,7 @@ function renderAchievements() {
 
   const tiers = [
     { min: 0, icon: "🌱", name: "Người mới bắt đầu" },
-    { min: 1, icon: "🌸", name: "Nhà thám hiểm" },
+    { min: 1, icon: "⭐", name: "Nhà thám hiểm" },
     { min: 3, icon: "🏔️", name: "Lữ khách dày dạn" },
     { min: 5, icon: "👑", name: "Bậc thầy du lịch" },
     { min: 8, icon: "🌍", name: "Huyền thoại xê dịch" },
@@ -452,7 +452,7 @@ function renderAchievements() {
       </div>
     </div>
     <div class="achievement-chip"><span>🗺️</span><div><strong>${totalDests}</strong><small>Điểm đến</small></div></div>
-    <div class="achievement-chip"><span>✅</span><div><strong>${visited}</strong><small>Đã khám phá</small></div></div>
+    <div class="achievement-chip"><span>🚩</span><div><strong>${visited}</strong><small>Đã khám phá</small></div></div>
     <div class="achievement-chip"><span>💎</span><div><strong>${savedPercent}%</strong><small>Ngân sách còn lại</small></div></div>
   `;
 }
